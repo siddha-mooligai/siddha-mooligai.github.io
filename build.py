@@ -55,7 +55,7 @@ def plant_page(p):
     body = f"""<header class="hero">
   <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
   <h1>{e['tamil_name']}</h1>
-  <p class="sub">{e['english_name']} · <i>{e['botanical_name']}</i></p>
+  <p class="sub">{e['english_name']}{f" · <i>{e['botanical_name']}</i>" if p.get("botanical_name") else ""}</p>
 </header>
 <main>
 {img}

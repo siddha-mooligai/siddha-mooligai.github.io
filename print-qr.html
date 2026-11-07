@@ -50,7 +50,7 @@
       card.innerHTML = `<h2></h2><p class="en"></p><div class="qr"></div>
         <p class="hint">📱 ஸ்கேன் செய்து தகவலைப் படிக்கவும்</p><p class="url"></p>`;
       card.querySelector('h2').textContent = p.tamil_name;
-      card.querySelector('.en').textContent = p.english_name + ' · ' + p.botanical_name;
+      card.querySelector('.en').textContent = p.english_name + (p.botanical_name ? ' · ' + p.botanical_name : '');
       card.querySelector('.url').textContent = url;
       new QRCode(card.querySelector('.qr'), { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
       grid.appendChild(card);
