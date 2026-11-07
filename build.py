@@ -4,6 +4,7 @@ Run:  python build.py
 Creates:  index.html  and  plants/<id>/index.html  for every plant.
 Uses only the Python standard library.
 """
+import hashlib
 import json
 import shutil
 from html import escape
@@ -24,7 +25,7 @@ HEAD = """<!doctype html>
 <title>{title}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="{css}">
+<link rel="stylesheet" href="{css}?v={css_version}">
 <script data-goatcounter="https://{goatcounter}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -34,6 +35,11 @@ FOOT = """<footer>{disclaimer}</footer>
 </body>
 </html>
 """
+
+
+def asset_version(name):
+    """Short content hash, appended as ?v=... so phones fetch the new file after every change."""
+    return hashlib.md5((ROOT / name).read_bytes()).hexdigest()[:8]
 
 
 def li_list(items):
@@ -81,10 +87,12 @@ def plant_page(p):
                f'width="100%" loading="eager">{credit}</figure>')
 
     body = f"""<header class="hero">
-  <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
+  <div class="topbar">
+    <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
+    <span class="views" id="views" hidden>👁 <span></span> பார்வைகள்</span>
+  </div>
   <h1>{e['tamil_name']}</h1>
   <p class="sub">{e['english_name']}{f" · <i>{e['botanical_name']}</i>" if p.get("botanical_name") else ""}</p>
-  <p class="views" id="views" hidden>👁 <span></span> பார்வைகள்</p>
 </header>
 <main>
 {img}
@@ -103,9 +111,9 @@ def plant_page(p):
   <span class="like-count" aria-live="polite"></span>
 </section>
 </main>
-<script src="../../stats.js" defer></script>
+<script src="../../stats.js?v={asset_version('stats.js')}" defer></script>
 """
-    return (HEAD.format(title=f"{e['tamil_name']} – {SITE_TITLE}", css="../../style.css", goatcounter=GOATCOUNTER)
+    return (HEAD.format(title=f"{e['tamil_name']} – {SITE_TITLE}", css="../../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER)
             + body + FOOT.format(disclaimer=DISCLAIMER))
 
 
@@ -121,7 +129,7 @@ def index_page(plants):
 {cards}
 </ul></main>
 """
-    return HEAD.format(title=SITE_TITLE, css="style.css", goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
+    return HEAD.format(title=SITE_TITLE, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
 
 
 def main():
