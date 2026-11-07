@@ -15,8 +15,15 @@
 
   function num(s) { return parseInt(String(s).replace(/[^\d]/g, ''), 10) || 0; }
   function fmt(n) { return n.toLocaleString('en-IN'); }
+  // GoatCounter caches each counter answer for ~4 hours, keyed on path + start/end.
+  // A far-future "end" date that changes every 10 minutes gives a fresh count (≤10 min old);
+  // any end date after today counts all visits, so the number itself is unaffected.
+  function freshEnd() {
+    var slot = Math.floor(Date.now() / 600000) - 2990000;   // 10-minute slots since 7 Nov 2026
+    return new Date(Date.UTC(2030, 0, 1) + Math.max(slot, 0) * 86400000).toISOString().slice(0, 10);
+  }
   function getCount(path) {
-    return fetch(GC + '/counter/' + encodeURIComponent(path) + '.json')
+    return fetch(GC + '/counter/' + encodeURIComponent(path) + '.json?end=' + freshEnd())
       .then(function (r) {
         if (r.status === 404) return 0;          // no hits recorded yet
         if (!r.ok) throw new Error(r.status);
@@ -33,12 +40,9 @@
     countEl.textContent = likes > 0 ? fmt(likes) + ' பேர் விரும்பினர்' : '';
   }
 
-  // 👁 views (this page). Visits are recorded without the trailing slash (see build.py),
-  // and both forms are added up so that older visits recorded either way are counted.
-  var base = location.pathname.replace(/\/+$/, '');
-  Promise.all([getCount(base), getCount(base + '/').catch(function () { return 0; })]).then(function (r) {
-    return r[0] + r[1];
-  }).then(function (n) {
+  // 👁 views (this page). Visits are recorded without the trailing slash (see build.py);
+  // GoatCounter also treats "/plants/x/" and "/plants/x" as the same page.
+  getCount(location.pathname.replace(/\/+$/, '')).then(function (n) {
     // the current visit may not be counted yet; never show 0 to someone who is viewing it
     views.querySelector('span').textContent = fmt(Math.max(n, 1));
     views.hidden = false;
