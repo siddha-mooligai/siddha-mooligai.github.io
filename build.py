@@ -13,7 +13,8 @@ ROOT = Path(__file__).parent
 PLANTS_DIR = ROOT / "plants"
 
 SITE_TITLE = "சித்த மூலிகைக் கண்காட்சி"
-DISCLAIMER = "இத்தகவல்கள் விழிப்புணர்வுக்காக மட்டுமே. எந்த மூலிகையையும் பயன்படுத்தும் முன் தகுதியான சித்த மருத்துவரை அணுகவும்."
+GOATCOUNTER = "siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
+DISCLAIMER ="இத்தகவல்கள் விழிப்புணர்வுக்காக மட்டுமே. எந்த மூலிகையையும் பயன்படுத்தும் முன் தகுதியான சித்த மருத்துவரை அணுகவும்."
 
 HEAD = """<!doctype html>
 <html lang="ta">
@@ -24,6 +25,7 @@ HEAD = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="{css}">
+<script data-goatcounter="https://{goatcounter}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 """
@@ -82,6 +84,7 @@ def plant_page(p):
   <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
   <h1>{e['tamil_name']}</h1>
   <p class="sub">{e['english_name']}{f" · <i>{e['botanical_name']}</i>" if p.get("botanical_name") else ""}</p>
+  <p class="views" id="views" hidden>👁 <span></span> பார்வைகள்</p>
 </header>
 <main>
 {img}
@@ -94,9 +97,15 @@ def plant_page(p):
 {section("மருத்துவப் பயன்கள்", f"<ul>{li_list(p.get('uses', []))}</ul>" if p.get("uses") else "")}
 {section("பயன்படுத்தும் முறை", f"<p>{e['how_to_use']}</p>" if p.get("how_to_use") else "")}
 {f'<section class="caution"><h2>⚠ எச்சரிக்கை</h2><p>{e["caution"]}</p></section>' if p.get("caution") else ""}
+<section class="like" id="like" data-id="{e['id']}">
+  <p>இந்தத் தகவல் பயனுள்ளதாக இருந்ததா?</p>
+  <button type="button">👍 ஆம்</button>
+  <span class="like-count" aria-live="polite"></span>
+</section>
 </main>
+<script src="../../stats.js" defer></script>
 """
-    return (HEAD.format(title=f"{e['tamil_name']} – {SITE_TITLE}", css="../../style.css")
+    return (HEAD.format(title=f"{e['tamil_name']} – {SITE_TITLE}", css="../../style.css", goatcounter=GOATCOUNTER)
             + body + FOOT.format(disclaimer=DISCLAIMER))
 
 
@@ -112,7 +121,7 @@ def index_page(plants):
 {cards}
 </ul></main>
 """
-    return HEAD.format(title=SITE_TITLE, css="style.css") + body + FOOT.format(disclaimer=DISCLAIMER)
+    return HEAD.format(title=SITE_TITLE, css="style.css", goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
 
 
 def main():

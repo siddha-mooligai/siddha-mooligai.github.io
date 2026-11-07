@@ -53,6 +53,19 @@ section ul { margin: 4px 0 8px; padding-left: 22px; }
   width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: #fff; font-size: .9rem;
 }
 .note { background: var(--green-light); border-left: 5px solid var(--green); }
+.views {
+  display: inline-block; margin: 10px 0 0; padding: 2px 14px; border-radius: 999px;
+  background: rgba(255,255,255,.18); font-size: .9rem;
+}
+.views[hidden] { display: none; }
+.like { text-align: center; padding: 16px 18px 18px; }
+.like p { margin: 0 0 10px; font-weight: 600; }
+.like button {
+  font: inherit; font-size: 1.05rem; padding: 8px 26px; border-radius: 999px; cursor: pointer;
+  border: 2px solid var(--green); background: var(--green); color: #fff;
+}
+.like button:disabled { background: var(--green-light); color: var(--green); cursor: default; }
+.like-count { display: block; margin-top: 8px; color: var(--muted); font-size: .9rem; min-height: 1.4em; }
 .caution { background: var(--warn-bg); }
 .caution h2 { color: var(--warn); }
 .plant-list { list-style: none; padding: 0; display: grid; gap: 12px; }

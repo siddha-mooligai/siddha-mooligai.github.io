@@ -66,6 +66,19 @@ one under its photo, taken from the `image_credit` field in `plants.json`.
 
 To use your own photo, replace `images/<id>.jpg` and delete that plant's `image_credit` block, then rebuild.
 
+## Views 👁 and likes 👍
+
+Counts come from **GoatCounter** (free, no cookies). The account is `siddha-mooligai`, and its dashboard is at
+https://siddha-mooligai.goatcounter.com.
+
+- Each plant page shows **👁 N பார்வைகள்** in its header (views of that page).
+- At the end of each page is **"இந்தத் தகவல் பயனுள்ளதாக இருந்ததா? 👍 ஆம்"**. Each phone can like a plant once,
+  and the total shows as "N பேர் விரும்பினர்". Likes are stored in GoatCounter as events named `like-<id>`.
+- The GoatCounter setting **"Allow adding visitor counts on your website"** must be ON for the numbers to show.
+- To stop your own test visits being counted, open `https://siddha-mooligai.github.io/#toggle-goatcounter` once in your browser.
+- If GoatCounter is unreachable or blocked, the numbers are hidden and the page still works.
+- The code is in `stats.js`, and the account name is `GOATCOUNTER` in `build.py`.
+
 ## Adding a new plant
 
 1. Add an entry to `plants.json` with a new lowercase `id` that has no spaces.
