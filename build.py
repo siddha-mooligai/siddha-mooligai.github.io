@@ -26,6 +26,7 @@ HEAD = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="{css}?v={css_version}">
+<script>window.goatcounter = {{path: function (p) {{ return p.replace(/[/]+(?=$|[?])/, '') || '/'; }}}};</script>
 <script data-goatcounter="https://{goatcounter}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>

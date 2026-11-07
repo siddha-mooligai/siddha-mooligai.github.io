@@ -33,8 +33,12 @@
     countEl.textContent = likes > 0 ? fmt(likes) + ' பேர் விரும்பினர்' : '';
   }
 
-  // 👁 views (this page)
-  getCount(location.pathname).then(function (n) {
+  // 👁 views (this page). Visits are recorded without the trailing slash (see build.py),
+  // and both forms are added up so that older visits recorded either way are counted.
+  var base = location.pathname.replace(/\/+$/, '');
+  Promise.all([getCount(base), getCount(base + '/').catch(function () { return 0; })]).then(function (r) {
+    return r[0] + r[1];
+  }).then(function (n) {
     // the current visit may not be counted yet; never show 0 to someone who is viewing it
     views.querySelector('span').textContent = fmt(Math.max(n, 1));
     views.hidden = false;
