@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Code Cards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  body { font-family: "Noto Sans Tamil", system-ui, sans-serif; margin: 0; padding: 16px; background: #fff; color: #1f2a1c; }
+  .controls { max-width: 900px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .controls input { flex: 1; min-width: 240px; padding: 8px; font-size: 14px; }
+  .controls button { padding: 8px 16px; font-size: 14px; cursor: pointer; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto; }
+  .card { border: 3px solid #2e6b2f; border-radius: 14px; padding: 18px; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+  .card h2 { margin: 0; font-size: 26px; color: #2e6b2f; }
+  .card .en { margin: 0 0 12px; font-size: 14px; color: #5b6b55; }
+  .card .qr { display: flex; justify-content: center; margin: 8px 0; }
+  .card .hint { font-size: 14px; margin: 8px 0 4px; }
+  .card .url { font-size: 10px; color: #888; word-break: break-all; }
+  #msg { max-width: 900px; margin: 0 auto; color: #a33; }
+  @media print { .controls, #msg { display: none; } body { padding: 0; } }
+</style>
+</head>
+<body>
+<div class="controls">
+  <label for="base">Site URL:</label>
+  <input id="base" type="text">
+  <button id="regen">Update</button>
+  <button onclick="window.print()">Print</button>
+</div>
+<p id="msg"></p>
+<div class="grid" id="grid"></div>
+
+<script>
+  // Default base = the folder this page is served from (works automatically on GitHub Pages).
+  const baseInput = document.getElementById('base');
+  baseInput.value = new URL('./', location.href).href;
+  let plants = [];
+
+  function render() {
+    let base = baseInput.value.trim();
+    if (!base.endsWith('/')) base += '/';
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    plants.forEach(p => {
+      const url = base + 'plants/' + encodeURIComponent(p.id) + '/';
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<h2></h2><p class="en"></p><div class="qr"></div>
+        <p class="hint">📱 ஸ்கேன் செய்து தகவலைப் படிக்கவும்</p><p class="url"></p>`;
+      card.querySelector('h2').textContent = p.tamil_name;
+      card.querySelector('.en').textContent = p.english_name + ' · ' + p.botanical_name;
+      card.querySelector('.url').textContent = url;
+      new QRCode(card.querySelector('.qr'), { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+      grid.appendChild(card);
+    });
+  }
+
+  document.getElementById('regen').onclick = render;
+  fetch('plants.json')
+    .then(r => r.json())
+    .then(data => { plants = data; render(); })
+    .catch(() => {
+      document.getElementById('msg').textContent =
+        'Could not load plants.json. Open this page from the published GitHub Pages site (or a local server: python -m http.server), not by double-clicking the file.';
+    });
+</script>
+</body>
+</html>
