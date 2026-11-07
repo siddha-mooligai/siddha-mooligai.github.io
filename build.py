@@ -42,6 +42,10 @@ def section(heading, body):
     return f'<section><h2>{heading}</h2>{body}</section>' if body else ""
 
 
+def has_content(p):
+    return any(p.get(k) for k in ("description", "parts_used", "uses", "how_to_use", "caution"))
+
+
 def plant_page(p):
     e = {k: escape(v) if isinstance(v, str) else v for k, v in p.items()}
     img = ""
@@ -56,7 +60,8 @@ def plant_page(p):
 <main>
 {img}
 {section("வேறு பெயர்கள்", f"<p>{e.get('other_names', '')}</p>" if p.get('other_names') else "")}
-{section("அறிமுகம்", f"<p>{e['description']}</p>")}
+{section("அறிமுகம்", f"<p>{e['description']}</p>" if p.get("description") else "")}
+{"" if has_content(p) else '<section><p>இந்த மூலிகை பற்றிய தகவல்கள் விரைவில் சேர்க்கப்படும்.</p></section>'}
 {section("பயன்படும் பாகங்கள்", f'<ul class="chips">{li_list(p.get("parts_used", []))}</ul>' if p.get("parts_used") else "")}
 {section("மருத்துவப் பயன்கள்", f"<ul>{li_list(p.get('uses', []))}</ul>" if p.get("uses") else "")}
 {section("பயன்படுத்தும் முறை", f"<p>{e['how_to_use']}</p>" if p.get("how_to_use") else "")}
