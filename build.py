@@ -70,7 +70,13 @@ def plant_page(p):
     e = {k: escape(v) if isinstance(v, str) else v for k, v in p.items()}
     img = ""
     if p.get("image") and (ROOT / p["image"]).exists():
-        img = f'<img class="photo" src="../../{e["image"]}" alt="{e["tamil_name"]}">'
+        credit = ""
+        c = p.get("image_credit")
+        if c:
+            credit = (f'<figcaption>படம்: {escape(c["author"])} · {escape(c["license"])} · '
+                      f'<a href="{escape(c["source"])}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption>')
+        img = (f'<figure class="photo"><img src="../../{e["image"]}" alt="{e["tamil_name"]}" '
+               f'width="100%" loading="eager">{credit}</figure>')
 
     body = f"""<header class="hero">
   <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>

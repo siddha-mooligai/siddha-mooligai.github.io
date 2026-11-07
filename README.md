@@ -58,6 +58,14 @@ git push
 The site updates in about a minute. The printed QR stickers keep working because their links don't change.
 Browsers may show an old copy for up to 10 minutes. Refresh or use a private tab to see the change.
 
+## Photos
+
+Each plant's photo is in `images/<id>.jpg` (about 1000 px, under 200 KB). The current photos come from
+Wikimedia Commons under CC BY / CC BY-SA licences. These licences require a credit, so each page shows
+one under its photo, taken from the `image_credit` field in `plants.json`.
+
+To use your own photo, replace `images/<id>.jpg` and delete that plant's `image_credit` block, then rebuild.
+
 ## Adding a new plant
 
 1. Add an entry to `plants.json` with a new lowercase `id` that has no spaces.
