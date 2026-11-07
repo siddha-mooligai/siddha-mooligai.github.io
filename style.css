@@ -40,6 +40,12 @@ section p { margin: 4px 0 8px; }
 section ul { margin: 4px 0 8px; padding-left: 22px; }
 .chips { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .chips li { background: var(--green-light); color: var(--green); padding: 2px 12px; border-radius: 999px; }
+.facts-heading { color: var(--green); font-size: 1.3rem; line-height: 1.5; margin: 8px 0 14px; text-align: center; }
+.fact h3 { display: flex; align-items: baseline; gap: 10px; color: var(--green); font-size: 1.1rem; line-height: 1.5; margin: 6px 0; }
+.fact .num {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: #fff; font-size: .9rem;
+}
 .caution { background: var(--warn-bg); }
 .caution h2 { color: var(--warn); }
 .plant-list { list-style: none; padding: 0; display: grid; gap: 12px; }

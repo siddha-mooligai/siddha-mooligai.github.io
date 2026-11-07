@@ -43,7 +43,19 @@ def section(heading, body):
 
 
 def has_content(p):
-    return any(p.get(k) for k in ("description", "parts_used", "uses", "how_to_use", "caution"))
+    return any(p.get(k) for k in ("facts", "description", "parts_used", "uses", "how_to_use", "caution"))
+
+
+def facts_block(p):
+    if not p.get("facts"):
+        return ""
+    out = []
+    if p.get("facts_heading"):
+        out.append(f'<h2 class="facts-heading">{escape(p["facts_heading"])}</h2>')
+    for n, f in enumerate(p["facts"], 1):
+        out.append(f'<section class="fact"><h3><span class="num">{n}</span>{escape(f["title"])}</h3>'
+                   f'<p>{escape(f["text"])}</p></section>')
+    return "\n".join(out)
 
 
 def plant_page(p):
@@ -59,6 +71,7 @@ def plant_page(p):
 </header>
 <main>
 {img}
+{facts_block(p)}
 {section("வேறு பெயர்கள்", f"<p>{e.get('other_names', '')}</p>" if p.get('other_names') else "")}
 {section("அறிமுகம்", f"<p>{e['description']}</p>" if p.get("description") else "")}
 {"" if has_content(p) else '<section><p>இந்த மூலிகை பற்றிய தகவல்கள் விரைவில் சேர்க்கப்படும்.</p></section>'}
