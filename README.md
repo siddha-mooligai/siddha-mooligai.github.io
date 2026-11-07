@@ -1,58 +1,71 @@
 # Siddha Plants QR Exhibition
 
-Visitors scan the QR code on a plant's board and their phone opens that plant's page in Tamil.
-The site is static and hosted free on **GitHub Pages**.
+Visitors scan the QR sticker on a plant's board and their phone opens that plant's page in Tamil.
 
-## How it works
+- **Live site:** https://siddha-mooligai.github.io/
+- **Plant page:** `https://siddha-mooligai.github.io/plants/<id>/`
+- **Repository:** https://github.com/siddha-mooligai/siddha-mooligai.github.io (GitHub Pages, branch `main`, root)
+
+## Plants
+
+| # | Plant | id |
+|---|---|---|
+| 1 | சங்குப்பூ | sangupoo |
+| 2 | பிரண்டை | pirandai |
+| 3 | மலைவேம்பு | malaivembu |
+| 4 | ஆடாதோடை | aadathodai |
+| 5 | ஆமணக்கு | aamanaku |
+| 6 | புங்கை | pungu |
+| 7 | குப்பைமேனி | kuppaimeni |
+| 8 | கற்றாழை | katralai |
+| 9 | சீமை அகத்தி | seemaiagathi |
+| 10 | நித்யகல்யாணி | nithiyakalyani |
+| 11 | பப்பாளி | pappali |
+
+**Don't change an `id` after the stickers are printed.** The `id` is part of the QR link.
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `plants.json` | All plant content in Tamil. This is the only file you edit. |
+| `build.py` | Turns `plants.json` into the web pages (`index.html`, `plants/<id>/index.html`). |
+| `style.css` | Page design. |
+| `print-qr.html` | Printable QR cards in the browser (open it on the live site). |
+| `tools/make_stickers.py` | Makes passport-size (35 × 45 mm, 600 dpi) QR sticker images. |
+| `qr-stickers/` | The sticker images, one per plant, plus a ZIP of all of them. |
+
+## Editing content
+
+Each plant in `plants.json` has these fields:
+
+```json
+"facts_heading": "🌸 சங்குப்பூ – உங்களுக்குத் தெரியுமா?",
+"facts": [ { "title": "...", "text": "..." } ],
+"note_heading": "🌿 சித்த மருத்துவக் குறிப்பு:",
+"note": "..."
+```
+
+After editing, rebuild and publish:
 
 ```
-plants.json  --(python build.py)-->  plants/<id>/index.html   (one page per plant)
-                                     index.html               (list of all plants)
-print-qr.html  -> printable QR cards, one per plant, for the boards
+python build.py
+git add .
+git commit -m "Update content"
+git push
 ```
 
-Each plant's URL looks like this:
-`https://<your-github-username>.github.io/<repo-name>/plants/<id>/`
+The site updates in about a minute. The printed QR stickers keep working because their links don't change.
+Browsers may show an old copy for up to 10 minutes. Refresh or use a private tab to see the change.
 
-## One-time setup
+## Adding a new plant
 
-1. Create a **public** repository on GitHub, e.g. `siddha-plants`.
-2. Push this folder to it:
-   ```
-   git remote add origin https://github.com/<username>/siddha-plants.git
-   git branch -M main
-   git push -u origin main
-   ```
-3. On GitHub, go to **Settings → Pages**. Under *Source*, pick **Deploy from a branch**, then branch **main**, folder **/ (root)**, and click **Save**.
-4. Wait about a minute. The site is live at `https://<username>.github.io/siddha-plants/`.
+1. Add an entry to `plants.json` with a new lowercase `id` that has no spaces.
+2. Run `python build.py`.
+3. Run `python tools/make_stickers.py` to make its sticker. This needs Microsoft Edge and `pip install pillow`.
+4. Commit and push.
 
-## Adding or editing a plant
+## Printing the stickers
 
-1. Add a new entry to `plants.json`. Copy an existing entry and change it. The `id` must be
-   lowercase English with no spaces (e.g. `nilavembu`). **It becomes the URL, so don't change it after the QR codes are printed.**
-2. (Optional) Put a photo at `images/<id>.jpg`. Keep it under about 300 KB so it loads fast on mobile data.
-3. Rebuild the pages, then commit and push:
-   ```
-   python build.py
-   git add .
-   git commit -m "Add nilavembu"
-   git push
-   ```
-
-Editing text later is safe: the URL stays the same, so the printed QR codes keep working.
-
-## Printing the QR codes
-
-Open `https://<username>.github.io/siddha-plants/print-qr.html` in a browser and click **Print**.
-Each card shows the plant's Tamil name and its QR code.
-
-Tips:
-- Print each QR code at least **4 × 4 cm**. Make it bigger if visitors will scan from far away.
-- Scan every printed code with a phone before the exhibition.
-- To preview on your computer before publishing, run `python -m http.server` in this folder and
-  open http://localhost:8000.
-
-## Content note
-
-The sample Tamil text for the 3 plants is only a placeholder. Please have a Siddha practitioner
-check all medicinal content before the exhibition.
+Send the files in `qr-stickers/` (or the ZIP) to a print shop and say: *passport size 35 × 45 mm, sticker paper, matte, do not crop.*
+Laminate the stickers for outdoor boards. Scan every printed sticker with a phone before the exhibition.

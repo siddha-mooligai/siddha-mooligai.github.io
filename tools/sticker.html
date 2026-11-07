@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@500;800&display=block">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  /* Canvas = 413 x 531 px  (35 x 45 mm at 300 dpi); rendered at 2x => 600 dpi */
+  html, body { margin: 0; width: 413px; height: 531px; overflow: hidden; background: #fff; }
+  .card {
+    box-sizing: border-box; width: 413px; height: 531px;
+    border: 6px solid #2e6b2f; border-radius: 22px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 14px 10px 14px;
+    font-family: "Noto Sans Tamil", sans-serif; color: #1f2a1c;
+  }
+  .name { font-weight: 800; color: #2e6b2f; font-size: 50px; line-height: 1.25; white-space: nowrap; text-align: center; }
+  .qr { background: #fff; padding: 6px; }
+  .qr img, .qr canvas { display: block; }
+  .hint { font-weight: 500; font-size: 21px; line-height: 1.3; text-align: center; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="name" id="name"></div>
+  <div class="qr" id="qr"></div>
+  <div class="hint">ஸ்கேன் செய்து தகவலைப் படிக்கவும்</div>
+</div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const nameEl = document.getElementById('name');
+  nameEl.textContent = q.get('ta');
+  new QRCode(document.getElementById('qr'), { text: q.get('url'), width: 320, height: 320, correctLevel: QRCode.CorrectLevel.Q });
+  // shrink long names to fit the width
+  document.fonts.ready.then(() => {
+    let size = 50;
+    while (nameEl.scrollWidth > 380 && size > 26) { size -= 2; nameEl.style.fontSize = size + 'px'; }
+  });
+</script>
+</body>
+</html>
