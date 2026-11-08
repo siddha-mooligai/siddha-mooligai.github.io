@@ -14,7 +14,8 @@ ROOT = Path(__file__).parent
 PLANTS_DIR = ROOT / "plants"
 
 SITE_TITLE = "சித்த மூலிகைக் கண்காட்சி"
-GOATCOUNTER = "siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
+CENTRE_NAME = "முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையம்"
+GOATCOUNTER ="siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
 DISCLAIMER ="இத்தகவல்கள் விழிப்புணர்வுக்காக மட்டுமே. எந்த மூலிகையையும் பயன்படுத்தும் முன் தகுதியான சித்த மருத்துவரை அணுகவும்."
 
 HEAD = """<!doctype html>
@@ -114,7 +115,8 @@ def plant_page(p):
   </div>
 </section>
 <nav class="bottombar">
-  <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
+  <a class="back" href="../../#plants">← அனைத்து மூலிகைகள்</a>
+  <a class="home" href="../../">🏠 முகப்பு</a>
 </nav>
 </main>
 <script src="../../stats.js?v={asset_version('stats.js')}" defer></script>
@@ -129,13 +131,19 @@ def index_page(plants):
         f'<span>{escape(p["english_name"])}</span></a></li>'
         for p in plants
     )
-    body = f"""<header class="hero"><h1>{SITE_TITLE}</h1>
-<p class="sub">ஒவ்வொரு மூலிகையின் அருகில் உள்ள QR குறியீட்டை ஸ்கேன் செய்யவும்</p></header>
-<main><ul class="plant-list">
+    body = f"""<header class="hero home-hero">
+  <img class="logo" src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="88" height="96">
+  <h1>{CENTRE_NAME}</h1>
+  <p class="sub">{SITE_TITLE}</p>
+</header>
+<main>
+<p class="intro">ஒவ்வொரு மூலிகையின் அருகில் உள்ள QR குறியீட்டை ஸ்கேன் செய்யவும்</p>
+<h2 class="list-heading" id="plants">மூலிகைகள் ({len(plants)})</h2>
+<ul class="plant-list">
 {cards}
 </ul></main>
 """
-    return HEAD.format(title=SITE_TITLE, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
+    return HEAD.format(title=f"{CENTRE_NAME} – {SITE_TITLE}", css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
 
 
 def main():
