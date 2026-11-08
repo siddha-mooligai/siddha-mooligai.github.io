@@ -55,14 +55,17 @@ section ul { margin: 4px 0 6px; padding-left: 20px; }
 .note { background: var(--green-light); border-left: 5px solid var(--green); }
 .note.warning { background: var(--warn-bg); border-left-color: var(--warn-border); }
 .note.warning h2 { color: var(--warn); }
-.like { text-align: center; padding: 14px 16px 16px; }
+.like { padding: 12px 16px 12px; }
 .like p { margin: 0 0 8px; font-weight: 600; }
+.like-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.like-left { display: flex; flex-direction: column; align-items: flex-start; }
 .like button {
   font: inherit; font-size: .95rem; padding: 6px 22px; border-radius: 999px; cursor: pointer;
   border: 2px solid var(--green); background: var(--green); color: #fff;
 }
 .like button:disabled { background: var(--green-light); color: var(--green); cursor: default; }
-.like-count { display: block; margin-top: 6px; color: var(--muted); font-size: .82rem; min-height: 1.4em; }
+.like-count { display: block; margin-top: 4px; color: var(--muted); font-size: .82rem; }
+.like-row .views { margin-top: 6px; font-size: .85rem; }
 .bottombar {
   display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
   margin: 4px 0 0; font-size: .85rem;

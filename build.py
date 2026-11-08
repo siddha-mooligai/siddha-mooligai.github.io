@@ -105,12 +105,16 @@ def plant_page(p):
 {f'<section class="caution"><h2>⚠ எச்சரிக்கை</h2><p>{e["caution"]}</p></section>' if p.get("caution") else ""}
 <section class="like" id="like" data-id="{e['id']}">
   <p>இந்தத் தகவல் பயனுள்ளதாக இருந்ததா?</p>
-  <button type="button">👍 ஆம்</button>
-  <span class="like-count" aria-live="polite"></span>
+  <div class="like-row">
+    <div class="like-left">
+      <button type="button">👍 ஆம்</button>
+      <span class="like-count" aria-live="polite"></span>
+    </div>
+    <span class="views" id="views" hidden>👁 <span></span> பார்வைகள்</span>
+  </div>
 </section>
 <nav class="bottombar">
   <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
-  <span class="views" id="views" hidden>👁 <span></span> பார்வைகள்</span>
 </nav>
 </main>
 <script src="../../stats.js?v={asset_version('stats.js')}" defer></script>
