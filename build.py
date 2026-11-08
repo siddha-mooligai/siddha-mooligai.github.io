@@ -71,7 +71,8 @@ def note_block(p):
     if not p.get("note"):
         return ""
     heading = escape(p.get("note_heading", ""))
-    return (f'<section class="note">{f"<h2>{heading}</h2>" if heading else ""}'
+    cls = "note warning" if p.get("note_heading", "").startswith("⚠") else "note"
+    return (f'<section class="{cls}">{f"<h2>{heading}</h2>" if heading else ""}'
             f'<p>{escape(p["note"])}</p></section>')
 
 
@@ -88,10 +89,6 @@ def plant_page(p):
                f'width="100%" loading="eager">{credit}</figure>')
 
     body = f"""<header class="hero">
-  <div class="topbar">
-    <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
-    <span class="views" id="views" hidden>👁 <span></span> பார்வைகள்</span>
-  </div>
   <h1>{e['tamil_name']}</h1>
   <p class="sub">{e['english_name']}{f" · <i>{e['botanical_name']}</i>" if p.get("botanical_name") else ""}</p>
 </header>
@@ -111,6 +108,10 @@ def plant_page(p):
   <button type="button">👍 ஆம்</button>
   <span class="like-count" aria-live="polite"></span>
 </section>
+<nav class="bottombar">
+  <a class="back" href="../../">← அனைத்து மூலிகைகள்</a>
+  <span class="views" id="views" hidden>👁 <span></span> பார்வைகள்</span>
+</nav>
 </main>
 <script src="../../stats.js?v={asset_version('stats.js')}" defer></script>
 """

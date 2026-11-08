@@ -22,6 +22,14 @@ Visitors scan the QR sticker on a plant's board and their phone opens that plant
 | 10 | நித்யகல்யாணி | nithiyakalyani |
 | 11 | பப்பாளி | pappali |
 | 12 | வெற்றிலை | vetrilai |
+| 13 | இரணக்கள்ளி | iranakalli |
+| 14 | வெட்பாலை | vetpalai |
+| 15 | பசலைக்கீரை | pasalaikeerai |
+| 16 | நந்தியாவட்டம் | nandhiyavattam |
+| 17 | கற்பூரவள்ளி | karpooravalli |
+| 18 | திருநீற்றுப்பச்சிலை | thiruneetrupachilai |
+| 19 | அரளி | arali |
+| 20 | நிலவேம்பு | nilavembu |
 
 **Don't change an `id` after the stickers are printed.** The `id` is part of the QR link.
 
