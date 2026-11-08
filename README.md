@@ -15,7 +15,7 @@ Visitors scan the QR sticker on a plant's board and their phone opens that plant
 | 3 | மலைவேம்பு | malaivembu |
 | 4 | ஆடாதோடை | aadathodai |
 | 5 | ஆமணக்கு | aamanaku |
-| 6 | புங்கை | pungu |
+| 6 | புங்கன் | pungu |
 | 7 | குப்பைமேனி | kuppaimeni |
 | 8 | கற்றாழை | katralai |
 | 9 | சீமை அகத்தி | seemaiagathi |
