@@ -21,6 +21,7 @@ Visitors scan the QR sticker on a plant's board and their phone opens that plant
 | 9 | சீமை அகத்தி | seemaiagathi |
 | 10 | நித்யகல்யாணி | nithiyakalyani |
 | 11 | பப்பாளி | pappali |
+| 12 | வெற்றிலை | vetrilai |
 
 **Don't change an `id` after the stickers are printed.** The `id` is part of the QR link.
 
