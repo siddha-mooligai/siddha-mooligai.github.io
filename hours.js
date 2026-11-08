@@ -14,14 +14,20 @@
   var overlay = document.getElementById('hours-overlay'), table = document.getElementById('hours-table');
 
   // Line-drawn door icons (colour comes from CSS currentColor)
-  var DOOR_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">' +
-    '<path d="M3.5 21.5h17"/><path d="M6 21.5V3h12v18.5"/>' +
-    '<path d="M6 3l7.5 2.3v17.2L6 21.5z" fill="currentColor" fill-opacity=".18"/>' +
-    '<circle cx="11.6" cy="13.2" r=".9" fill="currentColor" stroke="none"/></svg>';
-  var DOOR_CLOSED = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">' +
-    '<path d="M3.5 21.5h17"/><rect x="6" y="3" width="12" height="18.5" rx=".6" fill="currentColor" fill-opacity=".14"/>' +
-    '<rect x="9.6" y="11.2" width="4.8" height="4" rx=".7" fill="currentColor" stroke="none"/>' +
-    '<path d="M10.6 11.2V9.9a1.4 1.4 0 0 1 2.8 0v1.3"/></svg>';
+  var SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">';
+  // Clinic house with a medical cross: open door (open) / closed door + padlock badge (closed)
+  var DOOR_OPEN = SVG + '<path d="M2.8 11.2L12 3.5l9.2 7.7"/>' +
+    '<path d="M5 9.6V21.5h14V9.6" fill="currentColor" fill-opacity=".08"/>' +
+    '<path d="M12 8.2v5.6M9.2 11h5.6" stroke-width="2.3"/>' +
+    '<path d="M10.2 21.5v-5h3.6v5"/>' +
+    '<path d="M10.2 16.5l2.2.9v4.6l-2.2-.5z" fill="currentColor" fill-opacity=".35"/></svg>';
+  var DOOR_CLOSED = SVG + '<path d="M2.8 11.2L12 3.5l9.2 7.7"/>' +
+    '<path d="M5 9.6V21.5h14V9.6" fill="currentColor" fill-opacity=".08"/>' +
+    '<path d="M12 8.2v5.6M9.2 11h5.6" stroke-width="2.3"/>' +
+    '<rect x="10.2" y="16.5" width="3.6" height="5" fill="currentColor" fill-opacity=".35"/>' +
+    '<circle cx="18.6" cy="18.4" r="4.6" fill="#fff"/>' +
+    '<rect x="16.7" y="18.2" width="3.8" height="2.9" rx=".5" fill="currentColor" stroke="none"/>' +
+    '<path d="M17.5 18.2v-1a1.1 1.1 0 0 1 2.2 0v1" stroke-width="1.3"/></svg>';
 
   function mins(s) { var a = s.split(':'); return +a[0] * 60 + +a[1]; }
   // "16:00" -> "மாலை 4:00"
