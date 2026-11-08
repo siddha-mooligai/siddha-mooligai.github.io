@@ -55,6 +55,11 @@ section ul { margin: 4px 0 6px; padding-left: 20px; }
 .note { background: var(--green-light); border-left: 5px solid var(--green); }
 .note.warning { background: var(--warn-bg); border-left-color: var(--warn-border); }
 .note.warning h2 { color: var(--warn); }
+.note-key {
+  background: #fff; color: var(--text); font-size: .95rem;
+  border-radius: 8px; padding: 6px 10px; margin: 8px 0 6px; border: 1px solid #cfe3c2;
+}
+.note-key b { color: var(--green); }
 .note-warn {
   background: var(--warn-bg); color: var(--warn); font-weight: 600; font-size: .92rem;
   border-radius: 8px; padding: 6px 10px; margin: 8px 0 6px;
