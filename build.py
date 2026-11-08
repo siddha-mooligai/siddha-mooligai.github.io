@@ -77,8 +77,9 @@ def note_block(p):
         return ""
     heading = escape(p.get("note_heading", ""))
     cls = "note warning" if p.get("note_heading", "").startswith("⚠") else "note"
+    warn = f'<p class="note-warn">{escape(p["note_warning"])}</p>' if p.get("note_warning") else ""
     return (f'<section class="{cls}">{f"<h2>{heading}</h2>" if heading else ""}'
-            f'<p>{escape(p["note"])}</p></section>')
+            f'<p>{escape(p["note"])}</p>{warn}</section>')
 
 
 def plant_page(p):
