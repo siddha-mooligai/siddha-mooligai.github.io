@@ -5,7 +5,7 @@
     "english_name": "Butterfly Pea",
     "botanical_name": "Clitoria ternatea",
     "image": "images/sangupoo.jpg",
-    "facts_heading": "🌸 சங்குப்பூ – உங்களுக்குத் தெரியுமா?",
+    "facts_heading": "உங்களுக்குத் தெரியுமா?",
     "facts": [
       {
         "title": "நிறம் மாறும் மாயப் பூ",
@@ -21,12 +21,14 @@
       }
     ],
     "note_heading": "🌿 சித்த மருத்துவக் குறிப்பு:",
-    "note": "நிழலில் உலர்த்திய 3–4 பூக்களை வெந்நீரில் ஊறவைத்துத் தேநீராக அருந்தினால் மன அமைதியும் நல்ல உறக்கமும் கிடைக்கும் என்பது சித்தர் மரபு. (கர்ப்பிணிகள் மற்றும் மருந்து உட்கொள்பவர்கள் மருத்துவர் ஆலோசனையுடன் பயன்படுத்தவும்.)",
+    "note": "நிழலில் உலர்த்திய 3–4 பூக்களை வெந்நீரில் ஊறவைத்துத் தேநீராக அருந்தினால் மன அமைதியும் நல்ல உறக்கமும் கிடைக்கும் என்பது சித்தர் மரபு.",
     "image_credit": {
       "author": "Suyash Dwivedi",
       "license": "CC BY-SA 4.0",
       "source": "https://commons.wikimedia.org/wiki/File:Asian_pigeonwings_in_Bhopal_04.jpg"
-    }
+    },
+    "title_line": "🌸 சங்குப்பூ",
+    "format": 2
   },
   {
     "id": "pirandai",

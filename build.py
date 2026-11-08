@@ -94,8 +94,8 @@ def plant_page(p):
 </header>
 <main>
 {img}
-{facts_block(p)}
 {note_block(p)}
+{facts_block(p)}
 {section("வேறு பெயர்கள்", f"<p>{e.get('other_names', '')}</p>" if p.get('other_names') else "")}
 {section("அறிமுகம்", f"<p>{e['description']}</p>" if p.get("description") else "")}
 {"" if has_content(p) else '<section><p>இந்த மூலிகை பற்றிய தகவல்கள் விரைவில் சேர்க்கப்படும்.</p></section>'}
