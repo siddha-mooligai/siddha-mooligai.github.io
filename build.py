@@ -149,7 +149,7 @@ def home_page():
         for icon, label, href in HOME_LINKS)
     config = json.dumps({"from": OPEN_FROM, "until": OPEN_UNTIL, "holidays": GOVT_HOLIDAYS})
     body = f"""<header class="hero home-hero">
-  <img class="logo" src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="88" height="96">
+  <div class="logo"><img src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="80" height="87"></div>
   <h1>{CENTRE_NAME}</h1>
 </header>
 <main>
