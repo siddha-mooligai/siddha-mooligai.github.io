@@ -6,53 +6,37 @@
 <title>முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையம்</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="style.css?v=c4e0b5ad">
+<link rel="stylesheet" href="style.css?v=513af8f9">
 <script>window.goatcounter = {path: function (p) { return p.replace(/[/]+(?=$|[?])/, '') || '/'; }};</script>
 <script data-goatcounter="https://siddha-mooligai.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
-<div class="home-wrap">
 <header class="hero home-hero">
   <img class="logo" src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="88" height="96">
   <h1>முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையம்</h1>
 </header>
 <main>
 <ul class="home-tiles">
-<li><a href="plants/"><span class="tile-icon" aria-hidden="true">🌿</span><span class="tile-label">சித்த மூலிகைக் கண்காட்சி</span></a></li>
-<li><a href="camp/"><span class="tile-icon" aria-hidden="true">🩺</span><span class="tile-label">சித்த மருத்துவ முகாம்</span></a></li>
+<li><button class="tile status-tile" id="st-tile" type="button" aria-haspopup="dialog">
+  <span class="tile-icon" id="st-icon" aria-hidden="true">🕘</span>
+  <span class="tile-label" id="st-label">வருகை நேரம்</span>
+  <span class="st-clock" id="st-clock">திங்கள் – சனி</span>
+  <span class="st-next" id="st-next">காலை 9:00 – மாலை 4:00</span>
+</button></li>
+<li><a class="tile" href="plants/"><span class="tile-icon" aria-hidden="true">🌿</span><span class="tile-label">சித்த மூலிகைக் கண்காட்சி</span></a></li>
+<li><a class="tile" href="camp/"><span class="tile-icon" aria-hidden="true">🩺</span><span class="tile-label">சித்த மருத்துவ முகாம்</span></a></li>
 </ul>
 </main>
-<section class="hours" aria-label="வருகை நேரம்">
-  <div class="hours-head"><h2>🕘 வருகை நேரம்</h2><span class="hours-status" id="hours-status" hidden></span></div>
-<div class="hours-row" data-row="open"><span>திங்கள் – சனி</span><b>காலை 9:00 – மாலை 4:00</b></div>
-<div class="hours-row closed" data-row="closed"><span>ஞாயிறு &amp; அரசு விடுமுறை நாட்கள்</span><b>விடுமுறை</b></div>
-</section>
+<div class="hours-overlay" id="hours-overlay" hidden>
+  <div class="hours-panel" role="dialog" aria-modal="true" aria-labelledby="hours-title">
+    <div class="hours-panel-head"><h2 id="hours-title">🕘 வருகை நேரம்</h2>
+      <button type="button" class="hours-close" id="hours-close" aria-label="மூடு">✕</button></div>
+    <div id="hours-table"></div>
+    <p class="hours-note">அரசு விடுமுறை நாட்களிலும் விடுமுறை.</p>
+  </div>
 </div>
-<script>
-(function () {
-  var box = document.querySelector('.hours'), pill = document.getElementById('hours-status');
-  var FROM = "09:00", UNTIL = "16:00", HOLIDAYS = [];
-  function mins(s) { var a = s.split(':'); return +a[0] * 60 + +a[1]; }
-  function update() {
-    var parts = {};
-    new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', weekday: 'short', year: 'numeric',
-      month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
-      .formatToParts(new Date()).forEach(function (p) { parts[p.type] = p.value; });
-    var date = parts.year + '-' + parts.month + '-' + parts.day;
-    var now = (+parts.hour % 24) * 60 + +parts.minute;
-    var holiday = parts.weekday === 'Sun' || HOLIDAYS.indexOf(date) !== -1;
-    var open = !holiday && now >= mins(FROM) && now < mins(UNTIL);
-    box.classList.toggle('is-open', open);
-    box.classList.toggle('is-closed', !open);
-    pill.textContent = open ? '🟢 இப்போது திறந்திருக்கிறது' : '🔴 இப்போது மூடப்பட்டுள்ளது';
-    pill.hidden = false;
-    document.querySelectorAll('.hours-row').forEach(function (r) {
-      r.classList.toggle('today', r.getAttribute('data-row') === (holiday ? 'closed' : 'open'));
-    });
-  }
-  try { update(); setInterval(update, 60000); } catch (e) {}
-})();
-</script>
+<script type="application/json" id="hours-config">{"from": "09:00", "until": "16:00", "holidays": []}</script>
+<script src="hours.js?v=69f9d759" defer></script>
 <footer></footer>
 </body>
 </html>

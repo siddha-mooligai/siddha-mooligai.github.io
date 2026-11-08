@@ -20,14 +20,9 @@ HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page
     ("🌿", "சித்த மூலிகைக் கண்காட்சி", "plants/"),
     ("🩺", "சித்த மருத்துவ முகாம்", "camp/"),
 ]
-# Visiting hours box at the bottom of the home page: (days, time) rows
-VISIT_HOURS_TITLE = "🕘 வருகை நேரம்"
-VISIT_HOURS = [
-    ("திங்கள் – சனி", "காலை 9:00 – மாலை 4:00"),
-    ("ஞாயிறு & அரசு விடுமுறை நாட்கள்", "விடுமுறை"),
-]
-# Live open/closed status (India time): open Mon–Sat from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"),
-# closed on Sundays and on the dates in GOVT_HOLIDAYS ("YYYY-MM-DD").
+# Visiting hours — shown as the first home-page tile (live open/closed status, India time).
+# Open Monday–Saturday from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"); closed on Sundays
+# and on the dates in GOVT_HOLIDAYS ("YYYY-MM-DD"). Logic lives in hours.js.
 OPEN_FROM, OPEN_UNTIL = "09:00", "16:00"
 GOVT_HOLIDAYS = [
     # "2026-12-25",
@@ -147,56 +142,37 @@ def plant_page(p):
 
 
 def home_page():
-    """Landing page: logo, centre name and a few big links (more links can be added to HOME_LINKS)."""
+    """Landing page: logo, centre name, a live visiting-hours tile, then the activity tiles (HOME_LINKS)."""
     tiles = "\n".join(
-        f'<li><a href="{escape(href)}"><span class="tile-icon" aria-hidden="true">{icon}</span>'
+        f'<li><a class="tile" href="{escape(href)}"><span class="tile-icon" aria-hidden="true">{icon}</span>'
         f'<span class="tile-label">{escape(label)}</span></a></li>'
         for icon, label, href in HOME_LINKS)
-    rows = "\n".join(
-        f'<div class="hours-row{" closed" if time == "விடுமுறை" else ""}" data-row="{"open" if time != "விடுமுறை" else "closed"}">'
-        f'<span>{escape(days)}</span><b>{escape(time)}</b></div>'
-        for days, time in VISIT_HOURS)
-    status_js = f"""<script>
-(function () {{
-  var box = document.querySelector('.hours'), pill = document.getElementById('hours-status');
-  var FROM = {json.dumps(OPEN_FROM)}, UNTIL = {json.dumps(OPEN_UNTIL)}, HOLIDAYS = {json.dumps(GOVT_HOLIDAYS)};
-  function mins(s) {{ var a = s.split(':'); return +a[0] * 60 + +a[1]; }}
-  function update() {{
-    var parts = {{}};
-    new Intl.DateTimeFormat('en-GB', {{ timeZone: 'Asia/Kolkata', weekday: 'short', year: 'numeric',
-      month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }})
-      .formatToParts(new Date()).forEach(function (p) {{ parts[p.type] = p.value; }});
-    var date = parts.year + '-' + parts.month + '-' + parts.day;
-    var now = (+parts.hour % 24) * 60 + +parts.minute;
-    var holiday = parts.weekday === 'Sun' || HOLIDAYS.indexOf(date) !== -1;
-    var open = !holiday && now >= mins(FROM) && now < mins(UNTIL);
-    box.classList.toggle('is-open', open);
-    box.classList.toggle('is-closed', !open);
-    pill.textContent = open ? '🟢 இப்போது திறந்திருக்கிறது' : '🔴 இப்போது மூடப்பட்டுள்ளது';
-    pill.hidden = false;
-    document.querySelectorAll('.hours-row').forEach(function (r) {{
-      r.classList.toggle('today', r.getAttribute('data-row') === (holiday ? 'closed' : 'open'));
-    }});
-  }}
-  try {{ update(); setInterval(update, 60000); }} catch (e) {{}}
-}})();
-</script>"""
-    body = f"""<div class="home-wrap">
-<header class="hero home-hero">
+    config = json.dumps({"from": OPEN_FROM, "until": OPEN_UNTIL, "holidays": GOVT_HOLIDAYS})
+    body = f"""<header class="hero home-hero">
   <img class="logo" src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="88" height="96">
   <h1>{CENTRE_NAME}</h1>
 </header>
 <main>
 <ul class="home-tiles">
+<li><button class="tile status-tile" id="st-tile" type="button" aria-haspopup="dialog">
+  <span class="tile-icon" id="st-icon" aria-hidden="true">🕘</span>
+  <span class="tile-label" id="st-label">வருகை நேரம்</span>
+  <span class="st-clock" id="st-clock">திங்கள் – சனி</span>
+  <span class="st-next" id="st-next">காலை 9:00 – மாலை 4:00</span>
+</button></li>
 {tiles}
 </ul>
 </main>
-<section class="hours" aria-label="வருகை நேரம்">
-  <div class="hours-head"><h2>{VISIT_HOURS_TITLE}</h2><span class="hours-status" id="hours-status" hidden></span></div>
-{rows}
-</section>
+<div class="hours-overlay" id="hours-overlay" hidden>
+  <div class="hours-panel" role="dialog" aria-modal="true" aria-labelledby="hours-title">
+    <div class="hours-panel-head"><h2 id="hours-title">🕘 வருகை நேரம்</h2>
+      <button type="button" class="hours-close" id="hours-close" aria-label="மூடு">✕</button></div>
+    <div id="hours-table"></div>
+    <p class="hours-note">அரசு விடுமுறை நாட்களிலும் விடுமுறை.</p>
+  </div>
 </div>
-{status_js}
+<script type="application/json" id="hours-config">{config}</script>
+<script src="hours.js?v={asset_version('hours.js')}" defer></script>
 """
     return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
 
@@ -227,11 +203,13 @@ def list_page(plants):
   <p class="sub">ஒவ்வொரு மூலிகையின் அருகில் உள்ள QR குறியீட்டை ஸ்கேன் செய்யவும்</p>
 </header>
 <main>
-<h2 class="list-heading">மூலிகைகள் ({len(plants)})</h2>
+<div class="list-top">
+  <h2 class="list-heading">மூலிகைகள் ({len(plants)})</h2>
+  <a class="home" href="../">🏠 முகப்பு</a>
+</div>
 <ul class="plant-list">
 {cards}
 </ul>
-<nav class="bottombar"><span></span><a class="home" href="../">🏠 முகப்பு</a></nav>
 </main>
 """
     return HEAD.format(title=SITE_TITLE, css="../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
