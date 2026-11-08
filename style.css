@@ -107,6 +107,8 @@ footer:empty { display: none; }
   background: var(--card); border-radius: 12px; padding: 12px 16px;
   text-decoration: none; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
-.plant-list strong { font-size: 1.1rem; color: var(--green); }
-.plant-list span { color: var(--muted); font-size: .82rem; }
+.plant-list .names { display: flex; flex-direction: column; min-width: 0; }
+.plant-list strong { font-size: 1.1rem; color: var(--green); line-height: 1.35; }
+.plant-list .names span { color: var(--muted); font-size: .8rem; line-height: 1.3; }
+.plant-list .chev { color: var(--green); font-size: 1.5rem; line-height: 1; flex: none; }
 footer { max-width: 680px; margin: 4px auto 28px; padding: 0 16px; color: var(--muted); font-size: .78rem; text-align: center; }

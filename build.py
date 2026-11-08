@@ -149,8 +149,8 @@ def home_page():
 def list_page(plants):
     """Plant list at /plants/."""
     cards = "\n".join(
-        f'<li><a href="{escape(p["id"])}/"><strong>{escape(p["tamil_name"])}</strong>'
-        f'<span>{escape(p["english_name"])}</span></a></li>'
+        f'<li><a href="{escape(p["id"])}/"><span class="names"><strong>{escape(p["tamil_name"])}</strong>'
+        f'<span>{escape(p["english_name"])}</span></span><span class="chev" aria-hidden="true">›</span></a></li>'
         for p in plants
     )
     body = f"""<header class="hero">
