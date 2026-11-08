@@ -111,13 +111,12 @@ section ul { margin: 4px 0 6px; padding-left: 20px; }
 }
 .tile-label { font-weight: 700; font-size: .92rem; line-height: 1.4; }
 /* Visiting-hours tile */
-.status-tile { transition: background-color .3s; }
-.status-tile.is-open { background: #2e7d32; border-color: #2e7d32; color: #fff; }
-.status-tile.is-closed { background: #8e2a2a; border-color: #8e2a2a; color: #fff; }
-.status-tile.is-open .tile-icon, .status-tile.is-closed .tile-icon { background: rgba(255,255,255,.2); font-size: 1.5rem; }
-.status-tile.is-open:active, .status-tile.is-closed:active { filter: brightness(.92); }
-.st-clock { font-size: .78rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.st-next { font-size: .7rem; opacity: .9; line-height: 1.35; }
+.status-tile .tile-icon svg { width: 34px; height: 34px; display: block; }
+.status-tile.is-open .tile-icon { color: var(--green); }
+.status-tile.is-closed .tile-icon { color: #6b6b6b; background: #eeeeee; }
+.status-tile.is-closed .tile-label { color: #555; }
+.st-clock { font-size: .78rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text); }
+.st-next { font-size: .7rem; color: var(--muted); line-height: 1.35; }
 /* Pop-up timetable */
 .hours-overlay {
   position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.45);
