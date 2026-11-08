@@ -16,9 +16,21 @@ PLANTS_DIR = ROOT / "plants"
 SITE_TITLE = "சித்த மூலிகைக் கண்காட்சி"
 CENTRE_NAME = "முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையம்"
 # Links shown on the home page, as (label, relative URL). Add more here.
-HOME_LINKS = [
-    ("🌿 சித்த மூலிகைக் கண்காட்சி", "plants/"),
-    ("🩺 சித்த மருத்துவ முகாம்", "camp/"),
+HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page
+    ("🌿", "சித்த மூலிகைக் கண்காட்சி", "plants/"),
+    ("🩺", "சித்த மருத்துவ முகாம்", "camp/"),
+]
+# Visiting hours box at the bottom of the home page: (days, time) rows
+VISIT_HOURS_TITLE = "🕘 வருகை நேரம்"
+VISIT_HOURS = [
+    ("திங்கள் – சனி", "காலை 9:00 – மாலை 4:00"),
+    ("ஞாயிறு & அரசு விடுமுறை நாட்கள்", "விடுமுறை"),
+]
+# Live open/closed status (India time): open Mon–Sat from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"),
+# closed on Sundays and on the dates in GOVT_HOLIDAYS ("YYYY-MM-DD").
+OPEN_FROM, OPEN_UNTIL = "09:00", "16:00"
+GOVT_HOLIDAYS = [
+    # "2026-12-25",
 ]
 CAMP_TITLE = "சித்த மருத்துவ முகாம்"
 GOATCOUNTER ="siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
@@ -136,16 +148,55 @@ def plant_page(p):
 
 def home_page():
     """Landing page: logo, centre name and a few big links (more links can be added to HOME_LINKS)."""
-    links = "\n".join(f'<li><a href="{escape(href)}">{escape(label)}</a></li>' for label, href in HOME_LINKS)
-    body = f"""<header class="hero home-hero">
+    tiles = "\n".join(
+        f'<li><a href="{escape(href)}"><span class="tile-icon" aria-hidden="true">{icon}</span>'
+        f'<span class="tile-label">{escape(label)}</span></a></li>'
+        for icon, label, href in HOME_LINKS)
+    rows = "\n".join(
+        f'<div class="hours-row{" closed" if time == "விடுமுறை" else ""}" data-row="{"open" if time != "விடுமுறை" else "closed"}">'
+        f'<span>{escape(days)}</span><b>{escape(time)}</b></div>'
+        for days, time in VISIT_HOURS)
+    status_js = f"""<script>
+(function () {{
+  var box = document.querySelector('.hours'), pill = document.getElementById('hours-status');
+  var FROM = {json.dumps(OPEN_FROM)}, UNTIL = {json.dumps(OPEN_UNTIL)}, HOLIDAYS = {json.dumps(GOVT_HOLIDAYS)};
+  function mins(s) {{ var a = s.split(':'); return +a[0] * 60 + +a[1]; }}
+  function update() {{
+    var parts = {{}};
+    new Intl.DateTimeFormat('en-GB', {{ timeZone: 'Asia/Kolkata', weekday: 'short', year: 'numeric',
+      month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }})
+      .formatToParts(new Date()).forEach(function (p) {{ parts[p.type] = p.value; }});
+    var date = parts.year + '-' + parts.month + '-' + parts.day;
+    var now = (+parts.hour % 24) * 60 + +parts.minute;
+    var holiday = parts.weekday === 'Sun' || HOLIDAYS.indexOf(date) !== -1;
+    var open = !holiday && now >= mins(FROM) && now < mins(UNTIL);
+    box.classList.toggle('is-open', open);
+    box.classList.toggle('is-closed', !open);
+    pill.textContent = open ? '🟢 இப்போது திறந்திருக்கிறது' : '🔴 இப்போது மூடப்பட்டுள்ளது';
+    pill.hidden = false;
+    document.querySelectorAll('.hours-row').forEach(function (r) {{
+      r.classList.toggle('today', r.getAttribute('data-row') === (holiday ? 'closed' : 'open'));
+    }});
+  }}
+  try {{ update(); setInterval(update, 60000); }} catch (e) {{}}
+}})();
+</script>"""
+    body = f"""<div class="home-wrap">
+<header class="hero home-hero">
   <img class="logo" src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="88" height="96">
   <h1>{CENTRE_NAME}</h1>
 </header>
 <main>
-<ul class="home-links">
-{links}
+<ul class="home-tiles">
+{tiles}
 </ul>
 </main>
+<section class="hours" aria-label="வருகை நேரம்">
+  <div class="hours-head"><h2>{VISIT_HOURS_TITLE}</h2><span class="hours-status" id="hours-status" hidden></span></div>
+{rows}
+</section>
+</div>
+{status_js}
 """
     return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
 
