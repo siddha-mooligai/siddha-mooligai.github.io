@@ -30,6 +30,7 @@ Visitors scan the QR sticker on a plant's board and their phone opens that plant
 | 18 | திருநீற்றுப்பச்சிலை | thiruneetrupachilai |
 | 19 | அரளி | arali |
 | 20 | நிலவேம்பு | nilavembu |
+| 21 | சிற்றரத்தை | sitrarathai |
 
 **Don't change an `id` after the stickers are printed.** The `id` is part of the QR link.
 
