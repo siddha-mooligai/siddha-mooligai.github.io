@@ -82,7 +82,13 @@ section ul { margin: 4px 0 6px; padding-left: 20px; }
 }
 .home-hero h1 { font-size: 1.35rem; line-height: 1.4; }
 .home-hero .sub { margin-top: 4px; font-size: .9rem; }
-.intro { text-align: center; color: var(--muted); font-size: .9rem; margin: 2px 0 12px; }
+.home-links { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 12px; }
+.home-links a {
+  display: block; text-align: center; padding: 14px 16px; border-radius: 12px;
+  background: var(--card); color: var(--green); font-weight: 700; font-size: 1.05rem;
+  text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,.08); border: 2px solid var(--green-light);
+}
+footer:empty { display: none; }
 .list-heading { color: var(--green); font-size: 1.05rem; margin: 0 0 8px; scroll-margin-top: 8px; }
 .views {
   display: inline-block; padding: 1px 10px; border-radius: 999px; white-space: nowrap;

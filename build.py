@@ -15,6 +15,10 @@ PLANTS_DIR = ROOT / "plants"
 
 SITE_TITLE = "சித்த மூலிகைக் கண்காட்சி"
 CENTRE_NAME = "முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையம்"
+# Links shown on the home page, as (label, relative URL). Add more here.
+HOME_LINKS = [
+    ("🌿 சித்த மூலிகைக் கண்காட்சி", "plants/"),
+]
 GOATCOUNTER ="siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
 DISCLAIMER ="இத்தகவல்கள் விழிப்புணர்வுக்காக மட்டுமே. எந்த மூலிகையையும் பயன்படுத்தும் முன் தகுதியான சித்த மருத்துவரை அணுகவும்."
 
@@ -115,7 +119,7 @@ def plant_page(p):
   </div>
 </section>
 <nav class="bottombar">
-  <a class="back" href="../../#plants">← அனைத்து மூலிகைகள்</a>
+  <a class="back" href="../">← அனைத்து மூலிகைகள்</a>
   <a class="home" href="../../">🏠 முகப்பு</a>
 </nav>
 </main>
@@ -125,25 +129,42 @@ def plant_page(p):
             + body + FOOT.format(disclaimer=DISCLAIMER))
 
 
-def index_page(plants):
-    cards = "\n".join(
-        f'<li><a href="plants/{escape(p["id"])}/"><strong>{escape(p["tamil_name"])}</strong>'
-        f'<span>{escape(p["english_name"])}</span></a></li>'
-        for p in plants
-    )
+def home_page():
+    """Landing page: logo, centre name and a few big links (more links can be added to HOME_LINKS)."""
+    links = "\n".join(f'<li><a href="{escape(href)}">{escape(label)}</a></li>' for label, href in HOME_LINKS)
     body = f"""<header class="hero home-hero">
   <img class="logo" src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="88" height="96">
   <h1>{CENTRE_NAME}</h1>
-  <p class="sub">{SITE_TITLE}</p>
 </header>
 <main>
-<p class="intro">ஒவ்வொரு மூலிகையின் அருகில் உள்ள QR குறியீட்டை ஸ்கேன் செய்யவும்</p>
-<h2 class="list-heading" id="plants">மூலிகைகள் ({len(plants)})</h2>
+<ul class="home-links">
+{links}
+</ul>
+</main>
+"""
+    return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
+
+
+def list_page(plants):
+    """Plant list at /plants/."""
+    cards = "\n".join(
+        f'<li><a href="{escape(p["id"])}/"><strong>{escape(p["tamil_name"])}</strong>'
+        f'<span>{escape(p["english_name"])}</span></a></li>'
+        for p in plants
+    )
+    body = f"""<header class="hero">
+  <h1>{SITE_TITLE}</h1>
+  <p class="sub">ஒவ்வொரு மூலிகையின் அருகில் உள்ள QR குறியீட்டை ஸ்கேன் செய்யவும்</p>
+</header>
+<main>
+<h2 class="list-heading">மூலிகைகள் ({len(plants)})</h2>
 <ul class="plant-list">
 {cards}
-</ul></main>
+</ul>
+<nav class="bottombar"><span></span><a class="home" href="../">🏠 முகப்பு</a></nav>
+</main>
 """
-    return HEAD.format(title=f"{CENTRE_NAME} – {SITE_TITLE}", css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
+    return HEAD.format(title=SITE_TITLE, css="../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer=DISCLAIMER)
 
 
 def main():
@@ -161,7 +182,8 @@ def main():
         if p.get("image") and not (ROOT / p["image"]).exists():
             print(f"  note: image not found for {p['id']}: {p['image']}")
 
-    (ROOT / "index.html").write_text(index_page(plants), encoding="utf-8")
+    (PLANTS_DIR / "index.html").write_text(list_page(plants), encoding="utf-8")
+    (ROOT / "index.html").write_text(home_page(), encoding="utf-8")
     print(f"Built {len(plants)} plant pages.")
 
 
