@@ -19,7 +19,7 @@ Visitors scan the QR sticker on a plant's board and their phone opens that plant
 | 7 | குப்பைமேனி | kuppaimeni |
 | 8 | கற்றாழை | katralai |
 | 9 | சீமை அகத்தி | seemaiagathi |
-| 10 | நித்யகல்யாணி | nithiyakalyani |
+| 10 | நித்தியகல்யாணி | nithiyakalyani |
 | 11 | பப்பாளி | pappali |
 | 12 | வெற்றிலை | vetrilai |
 | 13 | இரணக்கள்ளி | iranakalli |
