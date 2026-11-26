@@ -197,12 +197,44 @@ def tile_cover(href, plant_count):
     return f"{rel}?v={asset_version(rel)}", f"{len(thumbs)} படங்கள்"
 
 
-def home_page(plant_count):
+def plant_slides(plants):
+    """Small (500px) copies of every plant photo for the home-page slideshow: [{src, name}]."""
+    from PIL import Image
+    out_dir = ROOT / "images" / "slides"; out_dir.mkdir(parents=True, exist_ok=True)
+    slides = []
+    for p in plants:
+        src = ROOT / p.get("image", "")
+        if not p.get("image") or not src.exists():
+            continue
+        dst = out_dir / f"{p['id']}.jpg"
+        if not dst.exists() or dst.stat().st_mtime < src.stat().st_mtime:
+            im = Image.open(src).convert("RGB"); im.thumbnail((500, 500))
+            im.save(dst, "JPEG", quality=72, optimize=True, progressive=True)
+        rel = dst.relative_to(ROOT).as_posix()
+        slides.append({"src": f"{rel}?v={asset_version(rel)}", "name": p["tamil_name"]})
+    return slides
+
+
+def home_page(plants):
     """Landing page: logo, centre name, a live visiting-hours tile, then the activity tiles (HOME_LINKS)."""
+    plant_count = len(plants)
     parts = []
     for icon, label, href in HOME_LINKS:
         cover, count = tile_cover(href, plant_count)
-        if cover:
+        if cover and href == "plants/":
+            # Plant exhibition tile: slow cross-fade slideshow through all plant photos (slideshow.js)
+            slides = plant_slides(plants)
+            first = slides[0] if slides else {"src": cover, "name": ""}
+            parts.append(
+                f'<li><a class="tile has-cover" href="{escape(href)}">'
+                f'<span class="tile-cover slideshow" id="plant-slides">'
+                f'<img class="slide on" src="{escape(first["src"])}" alt="">'
+                f'<img class="slide" alt="">'
+                f'<span class="slide-name" id="slide-name">{escape(first["name"])}</span></span>'
+                f'<script type="application/json" id="slides-data">{json.dumps(slides, ensure_ascii=False)}</script>'
+                f'<span class="tile-body"><span class="tile-label"><span aria-hidden="true">{icon}</span> {escape(label)}</span>'
+                f'<span class="tile-count">{escape(count)}</span></span></a></li>')
+        elif cover:
             parts.append(
                 f'<li><a class="tile has-cover" href="{escape(href)}">'
                 f'<span class="tile-cover"><img src="{escape(cover)}" alt="" loading="lazy"></span>'
@@ -239,6 +271,7 @@ def home_page(plant_count):
 </div>
 <script type="application/json" id="hours-config">{config}</script>
 <script src="hours.js?v={asset_version('hours.js')}" defer></script>
+<script src="slideshow.js?v={asset_version('slideshow.js')}" defer></script>
 """
     return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
 
@@ -427,7 +460,7 @@ def main():
         section_page(folder, title, cards)
     for gid, title in GALLERIES:
         print(f"Gallery {gid}: {build_gallery(gid, title)} photos")
-    (ROOT / "index.html").write_text(home_page(len(plants)), encoding="utf-8")  # after galleries: uses their thumbnails
+    (ROOT / "index.html").write_text(home_page(plants), encoding="utf-8")  # after galleries: uses their thumbnails
     print(f"Built {len(plants)} plant pages.")
 
 
