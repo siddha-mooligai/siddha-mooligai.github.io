@@ -24,7 +24,7 @@ HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page, after
     ("🏛️", "மையத்தின் வெளிப்புறத் தோற்றம்", "outerview/"),
     ("🪴", "சித்த மூலிகைத் தோட்டம்", "garden/"),
     ("🏫", "SHP", "shp/"),
-    ("🤰", "மகப்பேறு சஞ்சீவி (AMC)", "msk/"),
+    ("🤰", "மகப்பேறு சஞ்சீவி (MSK)", "msk/"),
     ("💬", "பயனாளிகளின் அனுபவங்கள் (Testimonials)", "testimonials/"),
 ]
 # Photo galleries: (folder id, page title). Put original photos in photos/<id>/ (kept local, not
@@ -37,7 +37,7 @@ GALLERIES = [
     ("outerview", "மையத்தின் வெளிப்புறத் தோற்றம்"),
     ("garden", "சித்த மூலிகைத் தோட்டம்"),
     ("shp", "SHP"),
-    ("msk", "மகப்பேறு சஞ்சீவி (AMC)"),
+    ("msk", "மகப்பேறு சஞ்சீவி (MSK)"),
     ("testimonials/diabetic-foot", "சர்க்கரை நோய் பாதப் புண் (Diabetic Foot)"),
     ("testimonials/diabetic-hba1c", "சர்க்கரை நோய் – HbA1c (Diabetic HbA1c)"),
 ]
@@ -161,12 +161,58 @@ def plant_page(p):
             + body + FOOT.format(disclaimer=DISCLAIMER))
 
 
-def home_page():
+def tile_cover(href, plant_count):
+    """(cover image URL or None, count text) for a home tile."""
+    def thumbs_of(gid):
+        d = ROOT / gid / "thumb"
+        return sorted(d.glob("*.jpg")) if d.exists() else []
+    if href == "plants/":
+        cover = ROOT / "images" / "cover-plants.jpg"
+        if not cover.exists() or cover.stat().st_mtime < (ROOT / PLANTS_COVER).stat().st_mtime:
+            from PIL import Image
+            im = Image.open(ROOT / PLANTS_COVER).convert("RGB"); im.thumbnail((500, 500))
+            im.save(cover, "JPEG", quality=75, optimize=True, progressive=True)
+        return f"images/cover-plants.jpg?v={asset_version('images/cover-plants.jpg')}", f"{plant_count} மூலிகைகள்"
+    gid = href.rstrip("/")
+    section = next((cards for folder, _, cards in SECTIONS if folder == gid), None)
+    groups = [f"{gid}/{h.rstrip('/')}" for _, _, h in section] if section else [gid]
+    thumbs = [t for g in groups for t in thumbs_of(g)]
+    if not thumbs:
+        return None, ""
+    pick = COVERS.get(href)
+    first = next((t for t in thumbs if t.name == pick), thumbs[0])
+    # Cover = the original photo WITHOUT the title band (a cropped band looks untidy on a tile).
+    # Made from the local original in photos/<gallery>/; falls back to the titled thumbnail.
+    gallery = first.parent.parent.relative_to(ROOT).as_posix()
+    original = next((o for o in (ROOT / "photos" / gallery).glob(first.stem + ".*")
+                     if o.suffix.lower() in PHOTO_EXTS), None)
+    cover = ROOT / "images" / "covers" / (gid.replace("/", "-") + ".jpg")
+    if original:
+        if not cover.exists() or cover.stat().st_mtime < original.stat().st_mtime or COVERS.get(href):
+            from PIL import Image, ImageOps
+            cover.parent.mkdir(parents=True, exist_ok=True)
+            im = ImageOps.exif_transpose(Image.open(original)).convert("RGB"); im.thumbnail((500, 500))
+            im.save(cover, "JPEG", quality=75, optimize=True, progressive=True)
+    rel = (cover if cover.exists() else first).relative_to(ROOT).as_posix()
+    return f"{rel}?v={asset_version(rel)}", f"{len(thumbs)} படங்கள்"
+
+
+def home_page(plant_count):
     """Landing page: logo, centre name, a live visiting-hours tile, then the activity tiles (HOME_LINKS)."""
-    tiles = "\n".join(
-        f'<li><a class="tile" href="{escape(href)}"><span class="tile-icon" aria-hidden="true">{icon}</span>'
-        f'<span class="tile-label">{escape(label)}</span></a></li>'
-        for icon, label, href in HOME_LINKS)
+    parts = []
+    for icon, label, href in HOME_LINKS:
+        cover, count = tile_cover(href, plant_count)
+        if cover:
+            parts.append(
+                f'<li><a class="tile has-cover" href="{escape(href)}">'
+                f'<span class="tile-cover"><img src="{escape(cover)}" alt="" loading="lazy"></span>'
+                f'<span class="tile-body"><span class="tile-label"><span aria-hidden="true">{icon}</span> {escape(label)}</span>'
+                f'<span class="tile-count">{escape(count)}</span></span></a></li>')
+        else:
+            parts.append(
+                f'<li><a class="tile" href="{escape(href)}"><span class="tile-icon" aria-hidden="true">{icon}</span>'
+                f'<span class="tile-label">{escape(label)}</span></a></li>')
+    tiles = "\n".join(parts)
     config = json.dumps({"from": OPEN_FROM, "until": OPEN_UNTIL, "holidays": GOVT_HOLIDAYS})
     body = f"""<header class="hero home-hero">
   <div class="logo"><img src="images/logo.png" alt="தமிழ்நாடு அரசு சின்னம்" width="80" height="87"></div>
@@ -197,6 +243,11 @@ def home_page():
     return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
 
 
+# Home tiles show a cover photo (first photo of the category) and a photo count. To choose a
+# different cover: COVERS = {"clinic/": "clinic-06.jpg"}. The plant tile uses PLANTS_COVER.
+COVERS = {}
+PLANTS_COVER = "images/sangupoo.jpg"
+
 # Section pages: a page of cards that open sub-galleries. (folder, title, [(icon, label, link)])
 SECTIONS = [
     ("testimonials", "பயனாளிகளின் அனுபவங்கள் (Testimonials)", [
@@ -206,6 +257,39 @@ SECTIONS = [
 ]
 
 PHOTO_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".heic"}
+# Title band added above every gallery photo (the photo itself is not covered). Set to [] to turn off.
+PHOTO_TITLE = ["GPHC - Muthupettai", "Thiruvarur - Dt"]
+TITLE_FONT = r"C:\Windows\Fonts\segoeuib.ttf"
+
+
+def add_title_band(im):
+    """Return a new image: a green band with PHOTO_TITLE lines, then the full photo underneath."""
+    if not PHOTO_TITLE:
+        return im
+    from PIL import Image, ImageDraw, ImageFont
+    w, h = im.size
+    unit = max(30, round(min(w, h) * 0.05))                 # scales with the photo
+    sizes = [round(unit * 1.0), round(unit * 0.72)]          # first line bigger, second smaller
+    def font(sz):
+        try:
+            return ImageFont.truetype(TITLE_FONT, sz)
+        except OSError:
+            return ImageFont.load_default()
+    probe = ImageDraw.Draw(im)
+    for i, line in enumerate(PHOTO_TITLE):                   # shrink to fit narrow photos
+        while sizes[min(i, 1)] > 12 and probe.textlength(line, font=font(sizes[min(i, 1)])) > w * 0.9:
+            sizes[min(i, 1)] -= 2
+    gap, pad = round(unit * 0.2), round(unit * 0.35)
+    heights = [sizes[min(i, 1)] for i in range(len(PHOTO_TITLE))]
+    band = pad * 2 + sum(heights) + gap * (len(PHOTO_TITLE) - 1)
+    out = Image.new("RGB", (w, h + band), (46, 107, 47))
+    out.paste(im, (0, band))
+    d = ImageDraw.Draw(out); y = pad
+    for i, line in enumerate(PHOTO_TITLE):
+        sz = heights[i]
+        d.text((w / 2, y + sz / 2), line, font=font(sz), fill="white", anchor="mm")
+        y += sz + gap
+    return out
 
 
 def build_gallery(gid, title):
@@ -228,7 +312,7 @@ def build_gallery(gid, title):
             targets = [(out / "img" / name, 1600, 82), (out / "thumb" / name, 500, 75)]
             if all(t.exists() and t.stat().st_mtime >= f.stat().st_mtime for t, _, _ in targets):
                 continue
-            im = ImageOps.exif_transpose(Image.open(f)).convert("RGB")
+            im = add_title_band(ImageOps.exif_transpose(Image.open(f)).convert("RGB"))
             for t, size, q in targets:
                 c = im.copy(); c.thumbnail((size, size))
                 c.save(t, "JPEG", quality=q, optimize=True, progressive=True)  # re-save drops EXIF/GPS
@@ -339,11 +423,11 @@ def main():
             print(f"  note: image not found for {p['id']}: {p['image']}")
 
     (PLANTS_DIR / "index.html").write_text(list_page(plants), encoding="utf-8")
-    (ROOT / "index.html").write_text(home_page(), encoding="utf-8")
     for folder, title, cards in SECTIONS:
         section_page(folder, title, cards)
     for gid, title in GALLERIES:
         print(f"Gallery {gid}: {build_gallery(gid, title)} photos")
+    (ROOT / "index.html").write_text(home_page(len(plants)), encoding="utf-8")  # after galleries: uses their thumbnails
     print(f"Built {len(plants)} plant pages.")
 
 
