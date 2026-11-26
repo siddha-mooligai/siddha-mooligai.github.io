@@ -19,6 +19,15 @@ CENTRE_NAME = "முத்துப்பேட்டை சித்த ஆர
 HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page
     ("🌿", "சித்த மூலிகைக் கண்காட்சி", "plants/"),
     ("🩺", "சித்த மருத்துவ முகாம்", "camp/"),
+    ("🏫", "SHP", "shp/"),
+    ("📷", "MSK", "msk/"),
+]
+# Photo galleries: (folder id, page title). Put original photos in photos/<id>/ (kept local, not
+# uploaded); the build writes resized web copies to <id>/img and <id>/thumb. Optional captions:
+# photos/<id>/captions.json  ->  {"photo1.jpg": "caption text", ...}
+GALLERIES = [
+    ("shp", "SHP"),
+    ("msk", "MSK"),
 ]
 # Visiting hours — shown as the first home-page tile (live open/closed status, India time).
 # Open Monday–Saturday from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"); closed on Sundays
@@ -177,6 +186,73 @@ def home_page():
     return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
 
 
+PHOTO_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".heic"}
+
+
+def build_gallery(gid, title):
+    """Resize photos/<gid>/* into <gid>/img (1600px) and <gid>/thumb (500px); write <gid>/index.html."""
+    src, out = ROOT / "photos" / gid, ROOT / gid
+    src.mkdir(parents=True, exist_ok=True)
+    originals = sorted(f for f in src.iterdir() if f.suffix.lower() in PHOTO_EXTS)
+    captions = {}
+    if (src / "captions.json").exists():
+        captions = json.loads((src / "captions.json").read_text(encoding="utf-8"))
+    names = []
+    if originals:
+        from PIL import Image, ImageOps  # only needed when there are photos
+        for sub in ("img", "thumb"):
+            (out / sub).mkdir(parents=True, exist_ok=True)
+        for f in originals:
+            name = f.stem + ".jpg"
+            names.append((name, captions.get(f.name, "")))
+            targets = [(out / "img" / name, 1600, 82), (out / "thumb" / name, 500, 75)]
+            if all(t.exists() and t.stat().st_mtime >= f.stat().st_mtime for t, _, _ in targets):
+                continue
+            im = ImageOps.exif_transpose(Image.open(f)).convert("RGB")
+            for t, size, q in targets:
+                c = im.copy(); c.thumbnail((size, size))
+                c.save(t, "JPEG", quality=q, optimize=True, progressive=True)  # re-save drops EXIF/GPS
+    keep = {n for n, _ in names}
+    for sub in ("img", "thumb"):  # remove web copies whose original was deleted
+        if (out / sub).exists():
+            for t in (out / sub).iterdir():
+                if t.name not in keep:
+                    t.unlink()
+    out.mkdir(exist_ok=True)
+    if names:
+        items = "\n".join(
+            f'<li><button type="button" class="g-item" data-full="img/{escape(n)}" data-cap="{escape(c)}">'
+            f'<img src="thumb/{escape(n)}" alt="{escape(c or title)}" loading="lazy"></button>'
+            f'{f"<p>{escape(c)}</p>" if c else ""}</li>'
+            for n, c in names)
+        content = f'<ul class="gallery">\n{items}\n</ul>'
+    else:
+        content = '<section><p>புகைப்படங்கள் விரைவில் சேர்க்கப்படும்.</p></section>'
+    body = f"""<header class="hero">
+  <h1>{escape(title)}</h1>
+  <p class="sub">{CENTRE_NAME}</p>
+</header>
+<main>
+<div class="list-top">
+  <h2 class="list-heading">புகைப்படங்கள் ({len(names)})</h2>
+  <a class="home" href="../">🏠 முகப்பு</a>
+</div>
+{content}
+</main>
+<div class="lightbox" id="lightbox" hidden>
+  <button type="button" class="lb-close" id="lb-close" aria-label="மூடு">✕</button>
+  <button type="button" class="lb-nav lb-prev" id="lb-prev" aria-label="முந்தைய">‹</button>
+  <figure><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
+  <button type="button" class="lb-nav lb-next" id="lb-next" aria-label="அடுத்த">›</button>
+</div>
+<script src="../gallery.js?v={asset_version('gallery.js')}" defer></script>
+"""
+    (out / "index.html").write_text(
+        HEAD.format(title=title, css="../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER)
+        + body + FOOT.format(disclaimer=""), encoding="utf-8")
+    return len(names)
+
+
 def camp_page():
     """Siddha medical camp page at /camp/ (content to be added)."""
     body = f"""<header class="hero">
@@ -234,6 +310,8 @@ def main():
     (ROOT / "index.html").write_text(home_page(), encoding="utf-8")
     (ROOT / "camp").mkdir(exist_ok=True)
     (ROOT / "camp" / "index.html").write_text(camp_page(), encoding="utf-8")
+    for gid, title in GALLERIES:
+        print(f"Gallery {gid}: {build_gallery(gid, title)} photos")
     print(f"Built {len(plants)} plant pages.")
 
 

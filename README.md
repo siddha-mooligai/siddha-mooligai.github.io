@@ -89,6 +89,19 @@ https://siddha-mooligai.goatcounter.com.
 - If GoatCounter is unreachable or blocked, the numbers are hidden and the page still works.
 - The code is in `stats.js`, and the account name is `GOATCOUNTER` in `build.py`.
 
+## Photo galleries (SHP, MSK)
+
+Each gallery has its own page (`/shp/`, `/msk/`) and a tile on the home page.
+
+1. Copy the original photos into `photos/shp/` or `photos/msk/`. The `photos/` folder is **not uploaded**.
+2. Optional captions go in `photos/<id>/captions.json`: `{"photo1.jpg": "caption in Tamil", ...}`
+3. Run `python build.py` (needs `pip install pillow`). It writes resized copies to `shp/img` and `shp/thumb`.
+   Location data (GPS) in the photos is removed during resizing.
+4. Commit and push.
+
+To add a new gallery or rename one, edit `GALLERIES` and `HOME_LINKS` in `build.py`.
+Deleting an original and rebuilding also removes its web copy.
+
 ## Adding a new plant
 
 1. Add an entry to `plants.json` with a new lowercase `id` that has no spaces.
