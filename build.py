@@ -24,7 +24,7 @@ HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page, after
     ("🏛️", "மையத்தின் வெளிப்புறத் தோற்றம்", "outerview/"),
     ("🪴", "சித்த மூலிகைத் தோட்டம்", "garden/"),
     ("🏫", "SHP", "shp/"),
-    ("🤰", "மகப்பேறு சஞ்சீவி", "msk/"),
+    ("🤰", "மகப்பேறு சஞ்சீவி (AMC)", "msk/"),
 ]
 # Photo galleries: (folder id, page title). Put original photos in photos/<id>/ (kept local, not
 # uploaded); the build writes resized web copies to <id>/img and <id>/thumb. Optional captions:
@@ -233,7 +233,7 @@ def build_gallery(gid, title):
             f'<img src="thumb/{escape(n)}" alt="{escape(c or title)}" loading="lazy"></button>'
             f'{f"<p>{escape(c)}</p>" if c else ""}</li>'
             for n, c in names)
-        content = f'<ul class="gallery">\n{items}\n</ul>'
+        content = f'<ul class="gallery g-{gid}">\n{items}\n</ul>'
     else:
         content = '<section><p>புகைப்படங்கள் விரைவில் சேர்க்கப்படும்.</p></section>'
     body = f"""<header class="hero">
