@@ -25,6 +25,7 @@ HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page, after
     ("🪴", "சித்த மூலிகைத் தோட்டம்", "garden/"),
     ("🏫", "SHP", "shp/"),
     ("🤰", "மகப்பேறு சஞ்சீவி (AMC)", "msk/"),
+    ("💬", "பயனாளிகளின் அனுபவங்கள் (Testimonials)", "testimonials/"),
 ]
 # Photo galleries: (folder id, page title). Put original photos in photos/<id>/ (kept local, not
 # uploaded); the build writes resized web copies to <id>/img and <id>/thumb. Optional captions:
@@ -37,6 +38,8 @@ GALLERIES = [
     ("garden", "சித்த மூலிகைத் தோட்டம்"),
     ("shp", "SHP"),
     ("msk", "மகப்பேறு சஞ்சீவி (AMC)"),
+    ("testimonials/diabetes", "சர்க்கரை நோய் (Diabetes)"),
+    ("testimonials/hba1c", "சர்க்கரை நோய் – HbA1c (Diabetes – HbA1c)"),
 ]
 # Visiting hours — shown as the first home-page tile (live open/closed status, India time).
 # Open Monday–Saturday from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"); closed on Sundays
@@ -194,12 +197,21 @@ def home_page():
     return HEAD.format(title=CENTRE_NAME, css="style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
 
 
+# Section pages: a page of cards that open sub-galleries. (folder, title, [(icon, label, link)])
+SECTIONS = [
+    ("testimonials", "பயனாளிகளின் அனுபவங்கள் (Testimonials)", [
+        ("🩸", "சர்க்கரை நோய் (Diabetes)", "diabetes/"),
+        ("🧪", "சர்க்கரை நோய் – HbA1c (Diabetes – HbA1c)", "hba1c/"),
+    ]),
+]
+
 PHOTO_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".heic"}
 
 
 def build_gallery(gid, title):
     """Resize photos/<gid>/* into <gid>/img (1600px) and <gid>/thumb (500px); write <gid>/index.html."""
     src, out = ROOT / "photos" / gid, ROOT / gid
+    up = "../" * (gid.count("/") + 1)  # path back to the site root
     src.mkdir(parents=True, exist_ok=True)
     originals = sorted(f for f in src.iterdir() if f.suffix.lower() in PHOTO_EXTS)
     captions = {}
@@ -235,7 +247,7 @@ def build_gallery(gid, title):
             f'<img src="thumb/{escape(n)}?v={ver(out / "thumb" / n)}" alt="{escape(c or title)}" loading="lazy"></button>'
             f'{f"<p>{escape(c)}</p>" if c else ""}</li>'
             for n, c in names)
-        content = f'<ul class="gallery g-{gid}">\n{items}\n</ul>'
+        content = f'<ul class="gallery g-{gid.replace("/", "-")}">\n{items}\n</ul>'
     else:
         content = '<section><p>புகைப்படங்கள் விரைவில் சேர்க்கப்படும்.</p></section>'
     body = f"""<header class="hero">
@@ -245,9 +257,10 @@ def build_gallery(gid, title):
 <main>
 <div class="list-top">
   <h2 class="list-heading">புகைப்படங்கள் ({len(names)})</h2>
-  <a class="home" href="../">🏠 முகப்பு</a>
+  <a class="home" href="{up}">🏠 முகப்பு</a>
 </div>
 {content}
+{'<nav class="bottombar"><a class="back" href="../">← திரும்பிச் செல்ல</a><span></span></nav>' if "/" in gid else ""}
 </main>
 <div class="lightbox" id="lightbox" hidden>
   <button type="button" class="lb-close" id="lb-close" aria-label="மூடு">✕</button>
@@ -255,12 +268,35 @@ def build_gallery(gid, title):
   <figure><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
   <button type="button" class="lb-nav lb-next" id="lb-next" aria-label="அடுத்த">›</button>
 </div>
-<script src="../gallery.js?v={asset_version('gallery.js')}" defer></script>
+<script src="{up}gallery.js?v={asset_version('gallery.js')}" defer></script>
 """
     (out / "index.html").write_text(
-        HEAD.format(title=title, css="../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER)
+        HEAD.format(title=title, css=up + "style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER)
         + body + FOOT.format(disclaimer=""), encoding="utf-8")
     return len(names)
+
+
+def section_page(folder, title, cards):
+    """A page of cards (like the home tiles) linking to sub-galleries, e.g. /testimonials/."""
+    tiles = "\n".join(
+        f'<li><a class="tile" href="{escape(href)}"><span class="tile-icon" aria-hidden="true">{icon}</span>'
+        f'<span class="tile-label">{escape(label)}</span></a></li>'
+        for icon, label, href in cards)
+    body = f"""<header class="hero">
+  <h1>{escape(title)}</h1>
+  <p class="sub">{CENTRE_NAME}</p>
+</header>
+<main>
+<div class="list-top"><span></span><a class="home" href="../">🏠 முகப்பு</a></div>
+<ul class="home-tiles">
+{tiles}
+</ul>
+</main>
+"""
+    (ROOT / folder).mkdir(exist_ok=True)
+    (ROOT / folder / "index.html").write_text(
+        HEAD.format(title=title, css="../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER)
+        + body + FOOT.format(disclaimer=""), encoding="utf-8")
 
 
 def list_page(plants):
@@ -304,6 +340,8 @@ def main():
 
     (PLANTS_DIR / "index.html").write_text(list_page(plants), encoding="utf-8")
     (ROOT / "index.html").write_text(home_page(), encoding="utf-8")
+    for folder, title, cards in SECTIONS:
+        section_page(folder, title, cards)
     for gid, title in GALLERIES:
         print(f"Gallery {gid}: {build_gallery(gid, title)} photos")
     print(f"Built {len(plants)} plant pages.")
