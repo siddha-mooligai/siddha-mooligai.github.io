@@ -227,10 +227,12 @@ def build_gallery(gid, title):
                 if t.name not in keep:
                     t.unlink()
     out.mkdir(exist_ok=True)
+    def ver(p):  # content hash, so browsers fetch a photo again whenever it changes
+        return hashlib.md5(p.read_bytes()).hexdigest()[:8]
     if names:
         items = "\n".join(
-            f'<li><button type="button" class="g-item" data-full="img/{escape(n)}" data-cap="{escape(c)}">'
-            f'<img src="thumb/{escape(n)}" alt="{escape(c or title)}" loading="lazy"></button>'
+            f'<li><button type="button" class="g-item" data-full="img/{escape(n)}?v={ver(out / "img" / n)}" data-cap="{escape(c)}">'
+            f'<img src="thumb/{escape(n)}?v={ver(out / "thumb" / n)}" alt="{escape(c or title)}" loading="lazy"></button>'
             f'{f"<p>{escape(c)}</p>" if c else ""}</li>'
             for n, c in names)
         content = f'<ul class="gallery g-{gid}">\n{items}\n</ul>'
