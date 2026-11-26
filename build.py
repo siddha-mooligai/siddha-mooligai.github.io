@@ -16,9 +16,13 @@ PLANTS_DIR = ROOT / "plants"
 SITE_TITLE = "சித்த மூலிகைக் கண்காட்சி"
 CENTRE_NAME = "முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையம்"
 # Links shown on the home page, as (label, relative URL). Add more here.
-HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page
+HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page, after the visiting-hours tile
     ("🌿", "சித்த மூலிகைக் கண்காட்சி", "plants/"),
     ("🩺", "சித்த மருத்துவ முகாம்", "camp/"),
+    ("🏥", "சிகிச்சைப் பிரிவு", "clinic/"),
+    ("🧹", "தூய்மைப் பணிகள்", "cleanliness/"),
+    ("🏛️", "மையத்தின் வெளிப்புறத் தோற்றம்", "outerview/"),
+    ("🪴", "சித்த மூலிகைத் தோட்டம்", "garden/"),
     ("🏫", "SHP", "shp/"),
     ("🤰", "மகப்பேறு சஞ்சீவி", "msk/"),
 ]
@@ -26,6 +30,11 @@ HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page
 # uploaded); the build writes resized web copies to <id>/img and <id>/thumb. Optional captions:
 # photos/<id>/captions.json  ->  {"photo1.jpg": "caption text", ...}
 GALLERIES = [
+    ("camp", "சித்த மருத்துவ முகாம்"),
+    ("clinic", "சிகிச்சைப் பிரிவு"),
+    ("cleanliness", "தூய்மைப் பணிகள்"),
+    ("outerview", "மையத்தின் வெளிப்புறத் தோற்றம்"),
+    ("garden", "சித்த மூலிகைத் தோட்டம்"),
     ("shp", "SHP"),
     ("msk", "மகப்பேறு சஞ்சீவி (AMC)"),
 ]
@@ -36,7 +45,6 @@ OPEN_FROM, OPEN_UNTIL = "09:00", "16:00"
 GOVT_HOLIDAYS = [
     # "2026-12-25",
 ]
-CAMP_TITLE = "சித்த மருத்துவ முகாம்"
 GOATCOUNTER ="siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
 DISCLAIMER ="இத்தகவல்கள் விழிப்புணர்வுக்காக மட்டுமே. எந்த மூலிகையையும் பயன்படுத்தும் முன் தகுதியான சித்த மருத்துவரை அணுகவும்."
 
@@ -253,20 +261,6 @@ def build_gallery(gid, title):
     return len(names)
 
 
-def camp_page():
-    """Siddha medical camp page at /camp/ (content to be added)."""
-    body = f"""<header class="hero">
-  <h1>{CAMP_TITLE}</h1>
-  <p class="sub">{CENTRE_NAME}</p>
-</header>
-<main>
-<section><p>முகாம் பற்றிய விவரங்கள் விரைவில் சேர்க்கப்படும்.</p></section>
-<nav class="bottombar"><span></span><a class="home" href="../">🏠 முகப்பு</a></nav>
-</main>
-"""
-    return HEAD.format(title=CAMP_TITLE, css="../style.css", css_version=asset_version("style.css"), goatcounter=GOATCOUNTER) + body + FOOT.format(disclaimer="")
-
-
 def list_page(plants):
     """Plant list at /plants/."""
     cards = "\n".join(
@@ -308,8 +302,6 @@ def main():
 
     (PLANTS_DIR / "index.html").write_text(list_page(plants), encoding="utf-8")
     (ROOT / "index.html").write_text(home_page(), encoding="utf-8")
-    (ROOT / "camp").mkdir(exist_ok=True)
-    (ROOT / "camp" / "index.html").write_text(camp_page(), encoding="utf-8")
     for gid, title in GALLERIES:
         print(f"Gallery {gid}: {build_gallery(gid, title)} photos")
     print(f"Built {len(plants)} plant pages.")
