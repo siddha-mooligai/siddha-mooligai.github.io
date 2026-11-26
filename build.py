@@ -20,14 +20,14 @@ HOME_LINKS = [  # (icon, label, link) — shown as tiles on the home page
     ("🌿", "சித்த மூலிகைக் கண்காட்சி", "plants/"),
     ("🩺", "சித்த மருத்துவ முகாம்", "camp/"),
     ("🏫", "SHP", "shp/"),
-    ("📷", "MSK", "msk/"),
+    ("🤰", "மகப்பேறு சஞ்சீவி", "msk/"),
 ]
 # Photo galleries: (folder id, page title). Put original photos in photos/<id>/ (kept local, not
 # uploaded); the build writes resized web copies to <id>/img and <id>/thumb. Optional captions:
 # photos/<id>/captions.json  ->  {"photo1.jpg": "caption text", ...}
 GALLERIES = [
     ("shp", "SHP"),
-    ("msk", "MSK"),
+    ("msk", "மகப்பேறு சஞ்சீவி (AMC)"),
 ]
 # Visiting hours — shown as the first home-page tile (live open/closed status, India time).
 # Open Monday–Saturday from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"); closed on Sundays
