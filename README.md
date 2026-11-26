@@ -89,18 +89,23 @@ https://siddha-mooligai.goatcounter.com.
 - If GoatCounter is unreachable or blocked, the numbers are hidden and the page still works.
 - The code is in `stats.js`, and the account name is `GOATCOUNTER` in `build.py`.
 
-## Photo galleries (SHP, MSK)
+## Photo galleries
 
-Each gallery has its own page (`/shp/`, `/msk/`) and a tile on the home page.
+Galleries: `camp`, `clinic`, `cleanliness`, `outerview`, `garden`, `shp`, `msk`, and the Testimonials
+section (`testimonials/diabetic-foot`, `testimonials/diabetic-hba1c`). Each has its own page
+(e.g. `/clinic/`; URLs are lowercase) and a cover-photo tile on the home page. The plant-exhibition
+tile shows a slow slideshow of the plant photos (`slideshow.js`).
 
-1. Copy the original photos into `photos/shp/` or `photos/msk/`. The `photos/` folder is **not uploaded**.
+1. Copy the original photos into `photos/<id>/`. The `photos/` folder is **not uploaded**.
 2. Optional captions go in `photos/<id>/captions.json`: `{"photo1.jpg": "caption in Tamil", ...}`
-3. Run `python build.py` (needs `pip install pillow`). It writes resized copies to `shp/img` and `shp/thumb`.
-   Location data (GPS) in the photos is removed during resizing.
+3. Run `python build.py` (needs `pip install pillow`). It writes resized copies to `<id>/img` and `<id>/thumb`,
+   adds the green "GPHC - Muthupettai / Thiruvarur - Dt" title band, and removes GPS data.
+   Photos are not cropped, so location stamps stay visible.
 4. Commit and push.
 
-To add a new gallery or rename one, edit `GALLERIES` and `HOME_LINKS` in `build.py`.
+To add a new gallery or rename one, edit `GALLERIES` and `HOME_LINKS` (and `SECTIONS` for card groups) in `build.py`.
 Deleting an original and rebuilding also removes its web copy.
+Hide patient details (name, phone, ID, QR/barcodes) on medical documents before adding them.
 
 ## Adding a new plant
 
