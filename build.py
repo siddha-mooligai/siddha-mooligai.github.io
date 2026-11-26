@@ -38,8 +38,8 @@ GALLERIES = [
     ("garden", "சித்த மூலிகைத் தோட்டம்"),
     ("shp", "SHP"),
     ("msk", "மகப்பேறு சஞ்சீவி (AMC)"),
-    ("testimonials/diabetes", "சர்க்கரை நோய் (Diabetes)"),
-    ("testimonials/hba1c", "சர்க்கரை நோய் – HbA1c (Diabetes – HbA1c)"),
+    ("testimonials/diabetic-foot", "சர்க்கரை நோய் பாதப் புண் (Diabetic Foot)"),
+    ("testimonials/diabetic-hba1c", "சர்க்கரை நோய் – HbA1c (Diabetic HbA1c)"),
 ]
 # Visiting hours — shown as the first home-page tile (live open/closed status, India time).
 # Open Monday–Saturday from OPEN_FROM to OPEN_UNTIL (24-hour "HH:MM"); closed on Sundays
@@ -200,8 +200,8 @@ def home_page():
 # Section pages: a page of cards that open sub-galleries. (folder, title, [(icon, label, link)])
 SECTIONS = [
     ("testimonials", "பயனாளிகளின் அனுபவங்கள் (Testimonials)", [
-        ("🩸", "சர்க்கரை நோய் (Diabetes)", "diabetes/"),
-        ("🧪", "சர்க்கரை நோய் – HbA1c (Diabetes – HbA1c)", "hba1c/"),
+        ("🦶", "சர்க்கரை நோய் பாதப் புண் (Diabetic Foot)", "diabetic-foot/"),
+        ("🧪", "சர்க்கரை நோய் – HbA1c (Diabetic HbA1c)", "diabetic-hba1c/"),
     ]),
 ]
 
