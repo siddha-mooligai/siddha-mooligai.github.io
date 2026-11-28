@@ -251,7 +251,7 @@ def home_page(plants):
   <h2 id="location-heading">மையத்தின் இருப்பிடம்</h2>
   <p><a href="{maps_url}" style="display:inline-flex;align-items:center;min-height:44px">Google Maps-ல் திறக்கவும்</a></p>
   <iframe title="முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையத்தின் வரைபடம்"
-    src="{maps_url}&amp;output=embed" loading="lazy" height="320"
+    src="{maps_url}&amp;output=embed" loading="lazy" height="280"
     style="display:block;width:100%;border:0" allowfullscreen></iframe>
 </section>"""
     body = f"""<header class="hero home-hero">
