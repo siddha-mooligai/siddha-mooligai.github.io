@@ -125,12 +125,22 @@ def plant_page(p):
         img = (f'<figure class="photo"><img src="../../{e["image"]}" alt="{e["tamil_name"]}" '
                f'width="100%" loading="eager">{credit}</figure>')
 
+    narration = ""
+    if (PLANTS_DIR / p["id"] / "narration-ta.mp3").is_file():
+        narration = """<section aria-labelledby="narration-heading">
+  <h2 id="narration-heading">தமிழில் கேளுங்கள்</h2>
+  <audio controls preload="none" aria-labelledby="narration-heading" style="display:block;width:100%">
+    <source src="narration-ta.mp3" type="audio/mpeg">
+    <a href="narration-ta.mp3">தமிழ் ஒலிப்பதிவைக் கேளுங்கள்</a>
+  </audio>
+</section>
+"""
     body = f"""<header class="hero">
   <h1>{e['tamil_name']}</h1>
   <p class="sub">{e['english_name']}{f" · <i>{e['botanical_name']}</i>" if p.get("botanical_name") else ""}</p>
 </header>
 <main>
-{img}
+{narration}{img}
 {note_block(p)}
 {facts_block(p)}
 {section("வேறு பெயர்கள்", f"<p>{e.get('other_names', '')}</p>" if p.get('other_names') else "")}
