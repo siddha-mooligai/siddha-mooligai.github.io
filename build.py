@@ -49,6 +49,7 @@ GOVT_HOLIDAYS = [
     # "2026-12-25",
 ]
 GOATCOUNTER ="siddha-mooligai"  # https://siddha-mooligai.goatcounter.com (view & like counts)
+ANNOUNCEMENTS = []
 DISCLAIMER ="இத்தகவல்கள் விழிப்புணர்வுக்காக மட்டுமே. எந்த மூலிகையையும் பயன்படுத்தும் முன் தகுதியான சித்த மருத்துவரை அணுகவும்."
 
 HEAD = """<!doctype html>
@@ -256,6 +257,10 @@ def home_page(plants):
                 f'<span class="tile-label">{escape(label)}</span></a></li>')
     tiles = "\n".join(parts)
     config = json.dumps({"from": OPEN_FROM, "until": OPEN_UNTIL, "holidays": GOVT_HOLIDAYS})
+    announcements = (
+        f"<ul>{li_list(ANNOUNCEMENTS)}</ul>"
+        if ANNOUNCEMENTS else "<p>தற்போது அறிவிப்புகள் எதுவும் இல்லை.</p>"
+    )
     maps_url = "https://maps.google.com/maps?cid=8280755249423740902"
     location = f"""<section aria-labelledby="location-heading">
   <h2 id="location-heading">மையத்தின் இருப்பிடம்</h2>
@@ -270,12 +275,18 @@ def home_page(plants):
 </header>
 <main>
 <ul class="home-tiles">
-<li><button class="tile status-tile" id="st-tile" type="button" aria-haspopup="dialog">
+<li style="grid-column:1 / -1"><button class="tile status-tile" id="st-tile" type="button" aria-haspopup="dialog">
   <span class="tile-icon" id="st-icon" aria-hidden="true">🕘</span>
   <span class="tile-label" id="st-label">வருகை நேரம்</span>
   <span class="st-clock" id="st-clock">திங்கள் – சனி</span>
   <span class="st-next" id="st-next">காலை 9:00 – மாலை 4:00</span>
 </button></li>
+</ul>
+<section aria-labelledby="announcements-heading">
+  <h2 id="announcements-heading">அறிவிப்புகள்</h2>
+  {announcements}
+</section>
+<ul class="home-tiles">
 {tiles}
 </ul>
 {location}
