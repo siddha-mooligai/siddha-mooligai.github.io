@@ -367,6 +367,16 @@ def build_gallery(gid, title):
         content = f'<ul class="gallery g-{gid.replace("/", "-")}">\n{items}\n</ul>'
     else:
         content = '<section><p>புகைப்படங்கள் விரைவில் சேர்க்கப்படும்.</p></section>'
+    location = ""
+    if gid == "outerview":
+        maps_url = "https://maps.google.com/maps?cid=8280755249423740902"
+        location = f"""<section aria-labelledby="location-heading">
+  <h2 id="location-heading">மையத்தின் இருப்பிடம்</h2>
+  <p><a href="{maps_url}" style="display:inline-flex;align-items:center;min-height:44px">Google Maps-ல் திறக்கவும்</a></p>
+  <iframe title="முத்துப்பேட்டை சித்த ஆரம்ப சுகாதார மையத்தின் வரைபடம்"
+    src="{maps_url}&amp;output=embed" loading="lazy" height="320"
+    style="display:block;width:100%;border:0" allowfullscreen></iframe>
+</section>"""
     body = f"""<header class="hero">
   <h1>{escape(title)}</h1>
   <p class="sub">{CENTRE_NAME}</p>
@@ -377,6 +387,7 @@ def build_gallery(gid, title):
   <a class="home" href="{up}">🏠 முகப்பு</a>
 </div>
 {content}
+{location}
 {'<nav class="bottombar"><a class="back" href="../">← திரும்பிச் செல்ல</a><span></span></nav>' if "/" in gid else ""}
 </main>
 <div class="lightbox" id="lightbox" hidden>
