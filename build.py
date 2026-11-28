@@ -258,7 +258,7 @@ def home_page(plants):
     tiles = "\n".join(parts)
     config = json.dumps({"from": OPEN_FROM, "until": OPEN_UNTIL, "holidays": GOVT_HOLIDAYS})
     announcements = (
-        f"<ul>{li_list(ANNOUNCEMENTS)}</ul>"
+        "\n".join(f"<p>{escape(message)}</p>" for message in ANNOUNCEMENTS)
         if ANNOUNCEMENTS else "<p>தற்போது அறிவிப்புகள் எதுவும் இல்லை.</p>"
     )
     maps_url = "https://maps.google.com/maps?cid=8280755249423740902"
@@ -275,17 +275,17 @@ def home_page(plants):
 </header>
 <main>
 <ul class="home-tiles">
-<li style="grid-column:1 / -1"><button class="tile status-tile" id="st-tile" type="button" aria-haspopup="dialog">
+<li><button class="tile status-tile" id="st-tile" type="button" aria-haspopup="dialog">
   <span class="tile-icon" id="st-icon" aria-hidden="true">🕘</span>
   <span class="tile-label" id="st-label">வருகை நேரம்</span>
   <span class="st-clock" id="st-clock">திங்கள் – சனி</span>
   <span class="st-next" id="st-next">காலை 9:00 – மாலை 4:00</span>
 </button></li>
-</ul>
-<section aria-labelledby="announcements-heading">
+<li><section class="tile" aria-labelledby="announcements-heading" style="margin:0;cursor:default">
   <h2 id="announcements-heading">அறிவிப்புகள்</h2>
   {announcements}
-</section>
+</section></li>
+</ul>
 <ul class="home-tiles">
 {tiles}
 </ul>
